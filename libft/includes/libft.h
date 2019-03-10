@@ -172,8 +172,10 @@ char				*ft_strcpy(char *dst, const char *src);
 char				*ft_strnew(size_t size);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
+char				*ft_pathjoin(char const *s1, char const *s2);
 char				**ft_strsplit(char const *s, char c);
 char				**ft_strssplit(char const *s, char const *c);
+void				ft_free_sarray(char **s);
 
 /*
 ** --- Other Functions ---------------------------------------------------------

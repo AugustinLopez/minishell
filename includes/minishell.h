@@ -28,10 +28,18 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-typedef struct		s_minishell
-{
-	int				ac;
-	char			**av;
-	char			**env;
-}					t_minishell;
+/*
+** global variable necessary to pass info to signal
+*/
+
+char	**g_env;
+typedef struct stat	t_stat;
+
+void	show_prompt_msg(void);
+void	signal_display(int signo);
+void	signal_no_display(int signo);
+int		get_home_path(char *path, char **return_path, int reverse);
+char	*get_from_env(char *var);
+void	ms_exit(int exit_status);
+void	initialize_env(int ac, char **av, char **env);
 #endif

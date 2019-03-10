@@ -27,7 +27,8 @@ STRCHR=	strchr strastr strastri strchri \
 		strncmp strlcmp strnchri
 STRSET=	strcat strncat strclr strcpy \
 		strdel strdup strjoin strnew \
-		strsub strsplit strssplit
+		strsub strsplit strssplit pathjoin \
+		free_sarray
 _OTHER=	gnl iswhitespace
 _LIBFT=	$(___PUT) $(___MEM) $(__LIST) $(____TO) $(STRCHR) $(STRSET) $(_OTHER)
 
@@ -56,7 +57,7 @@ OBJFTOA=$(__FTOA:%=$(PATH_OBJ)%.o)
 
 OPTION_O=-c -I$(PATH_1HDR) -I$(PATH_2HDR)
 INCLUDES=$(1ST_HEADER:%=$(PATH_1HDR)%) $(2ND_HEADER:%=$(PATH_2HDR)%)
-CC=gcc
+CC=gcc -g3
 RED=\033[31m
 GREEN=\033[32m
 YELLOW=\033[33m

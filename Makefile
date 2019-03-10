@@ -14,7 +14,7 @@ NAME=minishell
 
 # --- 1.Source/Header ----------------------------------------------------------
 
-SRC=main
+SRC=main ms_env_info ms_bonus_signal
 HDR=libft.h minishell.h
 
 # --- 2.Path -------------------------------------------------------------------
