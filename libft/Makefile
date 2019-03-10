@@ -24,11 +24,11 @@ __LIST=	lstnew lstdelone lstdel lstadd \
 ____TO=	atoi itoa atozu
 STRCHR=	strchr strastr strastri strchri \
 		strlen wstrlen wcharlen strcmp \
-		strncmp strnchri
+		strncmp strlcmp strnchri
 STRSET=	strcat strncat strclr strcpy \
 		strdel strdup strjoin strnew \
-		strsub strsplit
-_OTHER=	gnl
+		strsub strsplit strssplit
+_OTHER=	gnl iswhitespace
 _LIBFT=	$(___PUT) $(___MEM) $(__LIST) $(____TO) $(STRCHR) $(STRSET) $(_OTHER)
 
 PRINTF=ft_printf pf_buffer pf_number pf_number_2 pf_other pf_parsing pf_string pf_double pf_string_2

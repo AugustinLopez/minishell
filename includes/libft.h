@@ -100,6 +100,7 @@ size_t				ft_lstsize(t_list *lst);
 ** int					ft_isascii(int c);
 ** int					ft_isprint(int c);
 */
+int						ft_iswhitespace(char *s, int ingnore_line_feed);
 
 /*
 ** --- Math Functions ----------------------------------------------------------
@@ -146,6 +147,7 @@ size_t				ft_wstrlen(unsigned *str);
 size_t				ft_wcharlen(unsigned wc);
 int					ft_strcmp(const char *s1, const char *s2);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
+int					ft_strlcmp(char *s1, char *s2);
 
 /*
 ** --- String Set Functions ----------------------------------------------------
@@ -171,6 +173,7 @@ char				*ft_strnew(size_t size);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
 char				**ft_strsplit(char const *s, char c);
+char				**ft_strssplit(char const *s, char const *c);
 
 /*
 ** --- Other Functions ---------------------------------------------------------
