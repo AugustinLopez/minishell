@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 12:30:34 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/11 18:45:48 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int		is_bin_executable(t_minishell *ms, char *bin, t_stat stat)
 			i = run_cmd(ms, bin);
 		else
 			ft_dprintf(2, "%s: permission denied.\n", bin);
-		free(bin);
+		ft_memdel((void*)&bin);
 		return (i);
 	}
 	return (0);
@@ -61,14 +61,14 @@ int		is_bin_cmd(t_minishell *ms)
 		if (!bin)
 			return (ms_error(-1, "Error: not enough memory.\n"));
 		if (lstat(bin, &stat) < 0)
-			free(bin);
+			ft_memdel((void*)&bin);
 		else
 		{
-			ft_free_sarray(path);
+			ft_free_sarray(&path);
 			return (is_bin_executable(ms, bin, stat));
 		}
 		i++;
 	}
-	ft_free_sarray(path);
+	ft_free_sarray(&path);
 	return (0);
 }

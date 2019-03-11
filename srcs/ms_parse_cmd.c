@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 12:35:57 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/11 18:41:20 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,16 @@
 static int	is_builtin_cmd(t_minishell *ms)
 {
 	size_t	i;
+	int		j;
 
 	i = 0;
+	j = 0;
 	if (!ft_strcmp((ms->one_cmd)[0], "exit"))
 	{
+		if ((ms->one_cmd)[1])
+			j = ft_atoi(ms->one_cmd[1]);
+		if (j)
+			ms_exit(ms, j);
 		ms->flags |= MSF_BUILTIN_EXIT;
 		return (-1);
 	}
@@ -69,7 +75,7 @@ int			execute_all_commands(t_minishell *ms)
 			return (-1);
 		}
 		ret = execute_single_command(ms);
-		ft_free_sarray(ms->one_cmd);
+		ft_free_sarray(&(ms->one_cmd));
 		if (ret < 0)
 			break;
 		i++;
