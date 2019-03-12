@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 08:40:39 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/07 10:48:05 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/11 18:42:37 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,10 +172,11 @@ char				*ft_strcpy(char *dst, const char *src);
 char				*ft_strnew(size_t size);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
+char				*ft_pathjoin(char const *s1, char const *s2);
 char				**ft_strsplit(char const *s, char c);
 char				**ft_strssplit(char const *s, char const *c);
-char				*ft_pathjoin(char const *s1, char const *s2);
-void				ft_free_sarray(char **s);
+void				ft_free_sarray(char ***s);
+char				*ft_strtrim(char const *s);
 
 /*
 ** --- Other Functions ---------------------------------------------------------

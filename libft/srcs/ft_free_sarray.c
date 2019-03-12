@@ -6,23 +6,24 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 15:15:18 by aulopez           #+#    #+#             */
-/*   Updated: 2018/12/03 15:16:18 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/11 18:46:12 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <string.h>
 
-void	ft_free_sarray(char **s)
+void	ft_free_sarray(char ***s)
 {
 	size_t	i;
 
 	i = 1;
-	if (s)
+	if (*s)
 	{
-		while (s[i])
-			free(s[i++]);
-		free(s[0]);
-		free(s);
+		while ((*s)[i])
+			free((*s)[i++]);
+		free((*s)[0]);
+		free(*s);
 	}
+	*s = 0;
 }

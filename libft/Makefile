@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2019/02/22 12:29:39 by aulopez          ###   ########.fr        #
+#    Updated: 2019/03/12 10:37:01 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ ___PUT=	putchar putchar_fd putendl putendl_fd \
 		putnbr putnbr_fd putstr putstr_fd
 ___MEM=	memcmp memdel bzero memset \
 		memcpy memccpy memmove memchr \
-		memalloc
+		memalloc free
 __LIST=	lstnew lstdelone lstdel lstadd \
 		lstinsert lstappend lstfree lstsize
 ____TO=	atoi itoa atozu
@@ -28,7 +28,7 @@ STRCHR=	strchr strastr strastri strchri \
 STRSET=	strcat strncat strclr strcpy \
 		strdel strdup strjoin strnew \
 		strsub strsplit strssplit pathjoin \
-		free_sarray
+		free_sarray strtrim
 _OTHER=	gnl iswhitespace
 _LIBFT=	$(___PUT) $(___MEM) $(__LIST) $(____TO) $(STRCHR) $(STRSET) $(_OTHER)
 
