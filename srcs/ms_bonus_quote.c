@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 19:01:35 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/12 13:32:59 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,10 @@ int			read_if_necessary(t_minishell *ms)
 				ms_exit(ms, 0);
 			continue ;
 		}
-		ft_printf("2.%s\n", tmp);
-		tmp2 = !backsl ? ft_str3join(ms->input, "\n", tmp) : ft_strjoin(ms->input, tmp);
+		tmp2 = !backsl ? ft_sprintf("%s\n%s", ms->input, tmp) :
+			ft_strjoin(ms->input, tmp);
 		ms->input ? free(ms->input) : 0;
 		ms->input = tmp2;
-		ft_printf("3.%s\n", ms->input);
 		backsl = 0;
 		i = 0;
 		while (tmp[i])
@@ -86,7 +85,6 @@ int			read_if_necessary(t_minishell *ms)
 				backsl = 1;
 			i++;
 		}
-		ft_printf("%i %i %i\n", dquote, quote, backsl);
 		free(tmp);
 	}
 	return (0);
@@ -94,22 +92,103 @@ int			read_if_necessary(t_minishell *ms)
 
 int				split_ms(t_minishell *ms)
 {
-	//if " or ' : copy all until next " or '
-	//if / not in quote or ', copy next
+	t_list	*begin;
+	t_list	*last;
+	t_list	*tmp;
+	char	*zero;
+	int quote;
+	int dquote;
+	size_t	i;
+	size_t	j;
+	size_t	all;
+
+	quote = 0;
+	dquote = 0;
+	i = 0;
+	j = 0;
+	all = ft_strlen(ms->input);
+	zero = ft_strnew(all);
+	begin = ft_lstnew(zero, all + 1);
+	last = begin;
+	while ((ms->input[i]))
+	{
+		if (!quote && (ms->input)[i] == '\"')
+			dquote = (!dquote) ? 1 : 0;
+		else if (!dquote && (ms->input)[i] == '\'')
+			quote = (!quote) ? 1 : 0;
+		else if (!quote && !dquote && (ms->input)[i] == ';')
+		{
+			if (!(i && ms->input[i - 1] == ' '))
+			{
+				tmp = ft_lstnew(";", 2);
+				tmp->next = ft_lstnew(zero, all - i++);
+				tmp->next->zu = all + 2;
+				last->zu = j;
+				last->next = tmp;
+				last = tmp->next;
+			}
+			else
+			{
+				((char*)(last->pv))[j] = (ms->input)[i];
+				tmp = ft_lstnew(zero, all - i++);
+				tmp->zu = all + 2;
+				last->zu = j;
+				last->next = tmp;
+				last = tmp;
+			}
+			j = 0;
+		}
+		else if (!quote && !dquote && (ms->input)[i] == '\\')
+		{
+			((char*)(last->pv))[j++] = (ms->input)[i++];
+			((char*)(last->pv))[j++] = (ms->input)[i++];
+
+			continue ;
+		}
+		if (!quote && !dquote && (ms->input)[i] == ' ')
+		{
+			if (last->zu == all + 2)
+				last->zu = 0;
+			else
+			{
+				tmp = ft_lstnew(zero, all - i);
+				last->zu = j;
+				last->next = tmp;
+				last = tmp;
+				j = 0;
+			}
+			while (ms->input[i] == ' ')
+				i++;
+			continue ;
+		}
+		(last->zu == all + 2) ? last->zu = 0 : 0;
+		((char*)(last->pv))[j++] = (ms->input)[i++];
+	}
+	tmp = begin;
+	i = 0;
+	ms->all_cmd = (char **)ft_memalloc(sizeof(*(ms->all_cmd)) * (ft_lstsize(begin) + 1));
+	while (tmp)
+	{
+		(ms->all_cmd)[i] = (char*)(tmp->pv);
+		i++;
+		tmp = tmp->next;
+		free(begin);
+		begin = tmp;
+	}
 	return (0);
 }
 
 void			ms_inputsplit(t_minishell *ms)
 {
 
-	char	*p;
+/*	char	*p;
 	
-	/*p = ft_strdup(ms->input);
+	p = ft_strdup(ms->input);*/
 	read_if_necessary(ms);
 	split_ms(ms);
-	ft_printf("1.%s\nEnd.\n", ms->input);
+	/*ft_printf("1.%s\nEnd.\n", ms->input);
 	free(ms->input);
-	ms->input = p;*/
+	ms->input = p;
 	(void)p;
-	(void)ms;
+	(void)ms;*/
 }

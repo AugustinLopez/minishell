@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 18:41:20 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/12 16:53:58 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static int	is_builtin_cmd(t_minishell *ms)
 {
 	size_t	i;
 	int		j;
+	char	*tmp;
 
 	i = 0;
 	j = 0;
@@ -33,6 +34,28 @@ static int	is_builtin_cmd(t_minishell *ms)
 	{
 		while ((ms->env)[i])
 			ft_putendl((ms->env)[i++]);
+		return (1);
+	}
+	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
+	{
+		if (!ft_strcmp((ms->one_cmd)[1], "-n"))
+			j = 1;
+		i = 1 + j;
+		while ((ms->one_cmd)[i])
+		{
+			tmp = ft_strrstr((ms->one_cmd)[i], "\\c");
+			if (tmp && !(tmp[2]))
+			{
+				*tmp = 0;
+				j = 2;
+			}
+			ft_putstr((ms->one_cmd)[i++]);
+			if (j == 2)
+				break ;
+			if ((ms->one_cmd)[i])
+				write(1, " ", 1);
+		}
+		!j ? write(1, "\n", 1) : 0;
 		return (1);
 	}
 	if (!ft_strcmp((ms->one_cmd)[0], "msname"))
@@ -64,21 +87,53 @@ static int	execute_single_command(t_minishell *ms)
 int			execute_all_commands(t_minishell *ms)
 {
 	size_t	i;
+	size_t	j;
+	size_t	k;
+	size_t	l;
 	int		ret;
+	char	*tmp;
 
 	i = 0;
+	j = 0;
+	ms->one_cmd = ms->all_cmd;
 	while ((ms->all_cmd)[i])
 	{
-		if (!(ms->one_cmd = ft_strssplit((ms->all_cmd)[i], " \t\v\f\r")))
+		if ((k = ft_strlen(ms->all_cmd[i])))
 		{
-			ft_dprintf(2, "Error: not enough memory.\n");
-			return (-1);
+			ret = 0;
+			tmp = ft_strnew(k);
+			l = 0;
+			k = 0;
+			while ((ms->all_cmd[i][l]))
+			{
+				if (!ret && ms->all_cmd[i][l] == '\\')
+					l++;
+				if (ft_strchr("\'\"",(ms->all_cmd)[i][l]))
+				{
+					ret = 1;
+					l++;
+					continue;
+				}
+				tmp[k++] = (ms->all_cmd)[i][l++];
+			}
+			free((ms->all_cmd)[i]);
+			(ms->all_cmd)[i] = tmp;
 		}
-		ret = execute_single_command(ms);
-		ft_free_sarray(&(ms->one_cmd));
-		if (ret < 0)
-			break;
+		if ((ms->all_cmd)[i][0] == ';')
+		{
+			tmp = (ms->all_cmd)[i];
+			(ms->all_cmd)[i] = NULL;
+			//need to remove possible quote, single quote et '\'
+			ret = execute_single_command(ms);
+			if (ret < 0)
+				break ;
+			(ms->all_cmd)[i] = tmp;;
+			ms->one_cmd = (ms->all_cmd) + (i + 1);
+			j = i + 1;
+		}
 		i++;
 	}
+	if (j < i)
+		ret = execute_single_command(ms);
 	return (ret);
 }

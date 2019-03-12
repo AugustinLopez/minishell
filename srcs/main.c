@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 18:43:45 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/12 13:19:19 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int		main(int ac, char **av, char **env)
 		ms.input = ft_strtrim(tmp);
 		ms_inputsplit(&ms);
 		tmp ? ft_memdel((void**)&tmp) : 0;
-		ms.all_cmd = ft_strsplit(ms.input, ';');
 		ms.input ? ft_memdel((void**)&(ms.input)) : 0; //feed_historique here
 		i = execute_all_commands(&ms);
 		ft_free_sarray(&(ms.all_cmd));
