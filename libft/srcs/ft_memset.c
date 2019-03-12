@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/08 14:56:45 by aulopez           #+#    #+#             */
-/*   Updated: 2019/02/22 12:27:48 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/12 16:16:16 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static unsigned long long	set_memory_block(unsigned long long **magic,
 	return (bmagic);
 }
 
-void								*ft_memset(void *b, int c, size_t len)
+void						*ft_memset(void *b, int c, size_t len)
 {
 	unsigned long long	bmagic;
 	unsigned long long	*magic;

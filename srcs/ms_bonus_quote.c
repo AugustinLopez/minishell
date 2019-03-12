@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 13:32:59 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/12 16:56:22 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ int				split_ms(t_minishell *ms)
 		free(begin);
 		begin = tmp;
 	}
+	free(zero);
 	return (0);
 }
 

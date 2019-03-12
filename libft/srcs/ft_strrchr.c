@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcmp.c                                       :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/15 10:07:22 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 16:16:45 by aulopez          ###   ########.fr       */
+/*   Created: 2018/11/14 01:22:00 by aulopez           #+#    #+#             */
+/*   Updated: 2018/11/14 01:22:00 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strlcmp(const char *s1, const char *s2)
+char	*ft_strrchr(const char *s, int c)
 {
-	while (*s1 == *s2 && *s1 && *s2)
-	{
-		++s1;
-		++s2;
-	}
-	if (!*s2)
-		return (0);
-	return (*(unsigned char*)s1 - *(unsigned char*)s2);
+	char	*buf;
+
+	buf = 0;
+	if (*s == c)
+		buf = (char*)s;
+	while (*(s++))
+		if (*s == c)
+			buf = (char*)s;
+	return (buf);
 }

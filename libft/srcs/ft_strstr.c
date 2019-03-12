@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcmp.c                                       :+:      :+:    :+:   */
+/*   ft_strstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/15 10:07:22 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 16:16:45 by aulopez          ###   ########.fr       */
+/*   Created: 2018/11/14 01:22:00 by aulopez           #+#    #+#             */
+/*   Updated: 2018/11/15 09:33:15 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strlcmp(const char *s1, const char *s2)
+char	*ft_strstr(const char *haystack, const char *needle)
 {
-	while (*s1 == *s2 && *s1 && *s2)
+	const char	*hs;
+	const char	*ne;
+
+	if (!*needle)
+		return ((char*)haystack);
+	while (*haystack)
 	{
-		++s1;
-		++s2;
+		if (*haystack == *needle && *haystack)
+		{
+			hs = haystack;
+			ne = needle;
+			while (*(ne++) == *(hs++))
+				if (!*ne)
+					return ((char*)haystack);
+		}
+		++haystack;
 	}
-	if (!*s2)
-		return (0);
-	return (*(unsigned char*)s1 - *(unsigned char*)s2);
+	return (0);
 }
