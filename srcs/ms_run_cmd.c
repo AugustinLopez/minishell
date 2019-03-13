@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 18:45:48 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 13:54:28 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int		run_cmd(t_minishell *ms, char *path)
 	pid = fork();
 	signal(SIGINT, ms_signal_no_prompt);
 	if (!pid)
-		execve(path, ms->one_cmd, g_env);
+		execve(path, ms->one_cmd, ms->env);
 	else if (pid < 0)
 		return (ms_error(-1, "Error : failed to fork the process.\n"));
 	wait(&pid);
@@ -38,9 +38,10 @@ static int		is_bin_executable(t_minishell *ms, char *bin, t_stat stat)
 			i = run_cmd(ms, bin);
 		else
 			ft_dprintf(2, "%s: permission denied.\n", bin);
-		ft_memdel((void*)&bin);
+		bin ? ft_memdel((void*)&bin) : 0;
 		return (i);
 	}
+	bin ? ft_memdel((void*)&bin) : 0;
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 19:10:38 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 14:05:25 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ static int			read_again(t_minishell *ms, char **tmp, int option)
 {
 	int		j;
 
+	signal(SIGINT, ms_signal_btm);
 	option == 1 ? ft_printf("quote> ") : 0;
 	option == 2 ? ft_printf("dquote> ") : 0;
 	option == 3 ? ft_printf("> ") : 0;
@@ -79,12 +80,20 @@ int					read_if_needed(t_minishell *ms)
 	{
 		if ((option == 3) && tmp[0] == '\\' && ft_iswhitespace(tmp + 1, 1))
 		{
-			free(tmp);
+			tmp ? ft_memdel((void**)&(tmp)) : 0;
 			continue ;
 		}
-		ft_printf("%d.%s\n",option, tmp);
-		tmp2 = (option != 3) ? ft_sprintf("%s\n%s", ms->input, tmp) :
-			ft_strjoin(ms->input, tmp);
+		//ft_printf("%d.%s\n",option, tmp);
+		if (ms->flags & MSF_BACK_TO_MAIN)
+		{
+			tmp2 = ft_strdup(tmp);
+			ms_free(ms, 1);
+			ms->flags &= ~MSF_BACK_TO_MAIN;
+			option = 0;
+		}
+		else
+			tmp2 = (option != 3) ? ft_sprintf("%s\n%s", ms->input, tmp) :
+				ft_strjoin(ms->input, tmp);
 		option = do_i_need_to_read(&tmp, option);
 		tmp ? ft_memdel((void**)&tmp) : 0;
 		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
@@ -173,6 +182,7 @@ int				split_ms(t_minishell *ms)
 	}
 	tmp = begin;
 	i = 0;
+	ms->all_cmd ? ft_memdel((void**)&(ms->all_cmd)) : 0;
 	ms->all_cmd = (char **)ft_memalloc(sizeof(*(ms->all_cmd)) * (ft_lstsize(begin) + 1));
 	while (tmp)
 	{
@@ -190,6 +200,10 @@ void			ms_inputsplit(t_minishell *ms)
 {
 	if (read_if_needed(ms))
 		return ;
+	if (ms->flags & MSF_BACK_TO_MAIN)
+		ms_free(ms, 1);
 		//return (-1);
 	split_ms(ms);
+	if (ms->flags & MSF_BACK_TO_MAIN)
+		ms_free(ms, 1);
 }

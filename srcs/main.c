@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 13:19:19 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 14:01:29 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,40 +21,72 @@ int	ms_error(int ret, char *s)
 	return (ret);
 }
 
+void	ms_free(t_minishell *ms, int option)
+{
+	if (!option)
+	{
+		ms->env ? ft_free_sarray(&(ms->env)) : 0;
+		ms->curr_path ? ft_memdel((void**)&(ms->curr_path)) : 0;
+		ft_gnl(-1, NULL);
+	}
+	if (option <= 1)
+	{
+		ms->all_cmd ? ft_free_sarray(&(ms->all_cmd)) : 0;
+		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
+	}
+	ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
+	ms->tmp1 ? ft_memdel((void**)&(ms->tmp1)) : 0;
+}
+
 void	ms_exit(t_minishell *ms, int exit_status)
 {
-	ms->env ? ft_free_sarray(&(ms->env)) : 0;
-	ms->all_cmd ? ft_free_sarray(&(ms->all_cmd)) : 0;
-	ms->one_cmd ? ft_free_sarray(&(ms->one_cmd)) : 0;
-	ms->input ? ft_memdel((void**)&(ms->input)) : 0;
+	ms_free(ms, 0);
 	exit(exit_status);
 }
 
-void	show_prompt_msg(t_minishell *ms)
-{
-	char	*curr_dir;
-	char	buff[PATH_MAX + 1];
-	char	*print_path;
-	int		i;
+/*
+** Show prompt can be called by signal_handler
+** So i make this function as simple as possible
+*/
 
-	i = 0;
-	if (ms->flags && MSF_SHOW_PATH_HOME)
+void	show_prompt(t_minishell *ms)
+{
+	if ((ms->flags & MSF_SHOW_PATH_HOME) && ms->curr_path)
 	{
-		if (!(curr_dir = getcwd(buff, PATH_MAX)))
-			ft_dprintf(2, "Error: could not get path to current directory.\n");
-		else
-			i = get_home_path(ms, curr_dir, &print_path, 0);
-		if (!i && !print_path)
-		{
-			buff[0] = 0;
-			print_path = buff;
-		}
-		ft_printf("%s%s%s>:%s%s%s%s ", FT_CYAN, FT_BOLD, ms->hostname,
-			FT_EOC, FT_CYAN, print_path, FT_EOC);
+		ft_putstr(FT_CYAN);
+		ft_putstr(FT_BOLD);
+		ft_putstr(ms->hostname);
+		ft_putstr(">:");
+		ft_putstr(FT_EOC);
+		ft_putstr(FT_CYAN);
+		ft_putstr(ms->curr_path);
+		ft_putchar(' ');
+		ft_putstr(FT_EOC);
 	}
 	else
-		ft_printf("%s%s%s>%s ", FT_CYAN, FT_BOLD, ms->hostname, FT_EOC);
-	i ? ft_memdel((void**)&print_path) : 0;
+	{
+		ft_putstr(FT_CYAN);
+		ft_putstr(FT_BOLD);
+		ft_putstr(ms->hostname);
+		ft_putstr("> ");
+		ft_putstr(FT_EOC);
+	}
+}
+
+void	load_prompt(t_minishell *ms)
+{
+
+	char	buff[4096 + 1];
+	char	*curr_dir;
+
+	ms->curr_path ? ft_memdel((void**)&(ms->curr_path)) : 0;
+	if ((ms->flags & MSF_SHOW_PATH_HOME))
+	{
+		if (!(curr_dir = getcwd(buff, 4096)))
+			ft_dprintf(2, "Error: could not get path to current directory.\n");
+		else
+			get_home_path(ms, curr_dir, &(ms->curr_path), 0);
+	}
 }
 
 int		main(int ac, char **av, char **env)
@@ -62,38 +94,42 @@ int		main(int ac, char **av, char **env)
 	int			i;
 	t_minishell	ms;
 	char		*tmp;
+	int			j;
 
+	signal(SIGINT, ms_signal_prompt);
 	initialize_env(&ms, ac, av, env);
 	tmp = 0;
+	j = 0;
 	while (1)
 	{
-		show_prompt_msg(&ms);
-		signal(SIGINT, ms_signal_prompt);
-		i = ft_gnl(0, &tmp);
+		ms_free(&ms, 1);
+		show_prompt(&ms);
+		i = ft_gnl(0, &(ms.tmp0));
 		if (i == -1)
 		{
 			ft_dprintf(2, "Error: could not read stdin.\n");
-			break ;
+			ms_exit(&ms, EXIT_FAILURE);
 		}
-		if (ft_iswhitespace(tmp, 1))
+		if (ft_iswhitespace(ms.tmp0, 1))
 		{
-			i == 1 && tmp ? free(tmp) : 0;
+			i == 1 && ms.tmp0 ? ft_memdel((void**)&(ms.tmp0)) : 0;
 			i == 0 ? write(1, "\n", 1) : 0;
 			if (i == 0)
-				break;
+				ms_exit(&ms, EXIT_FAILURE);
 			continue ;
 		}
-		//gestion $ et ~ ici
-		ms.input = ft_strtrim(tmp);
+		if (!(ms.input = ft_strtrim((ms.tmp0))))
+		{
+			ft_dprintf(2, "Error: not enough memory.\n");
+			continue ;
+		}
 		ms_inputsplit(&ms);
-		tmp ? ft_memdel((void**)&tmp) : 0;
-		ms.input ? ft_memdel((void**)&(ms.input)) : 0; //feed_historique here
+		//tmp ? ft_memdel((void**)&tmp) : 0;
+		//ms.input ? ft_memdel((void**)&(ms.input)) : 0; //feed_historique here
 		i = execute_all_commands(&ms);
-		ft_free_sarray(&(ms.all_cmd));
-		ms.all_cmd = 0;
 		if (ms.flags & MSF_BUILTIN_EXIT)
 			break ;
 	}
-	ft_free_sarray(&(ms.env)); //function to free ms here
-	return (-1);
+	ms_free(&ms, 0);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 16:37:27 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 13:48:28 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 
 #define MSF_SHOW_PATH_HOME 1
 #define MSF_BUILTIN_EXIT 2
-
+#define MSF_BACK_TO_MAIN 4
 typedef struct		s_minishell
 {
 	int				ac;
@@ -45,24 +45,30 @@ typedef struct		s_minishell
 	char			**env;
 	int				flags;
 	char			hostname[HOSTNAME_SIZE + 1];
+	char			*curr_path;
 	char			*historique[HISTO_SIZE];
 	int				histo_begin;
 	char			*input;
 	char			**all_cmd;
 	char			**one_cmd;
+	char			*tmp0;
+	char			*tmp1;
 }					t_minishell;
 
-char	**g_env;
 t_minishell *g_ms;
 typedef struct stat	t_stat;
 
 int		ms_error(int ret, char *s);
-void	show_prompt_msg(t_minishell *ms);
+void	ms_free(t_minishell *ms, int option);
+void	ms_exit(t_minishell *ms, int exit_status);
+void	show_prompt(t_minishell *ms);
+void	load_prompt(t_minishell *ms);
+
 void	ms_signal_prompt(int signo);
 void	ms_signal_no_prompt(int signo);
+void	ms_signal_btm(int signo);
 int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse);
 char	*get_from_env(t_minishell *ms, char *var);
-void	ms_exit(t_minishell *ms, int exit_status);
 void	initialize_env(t_minishell *ms, int ac, char **av, char **env);
 int		run_cmd(t_minishell *ms, char *path);
 int		is_bin_cmd(t_minishell *ms);

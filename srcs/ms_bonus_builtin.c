@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 18:40:34 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 11:47:21 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,6 @@ int		builtin_mspath(t_minishell *ms)
 		else
 			ms->flags &= ~MSF_SHOW_PATH_HOME;
 	}
+	load_prompt(ms);
 	return (1);
 }

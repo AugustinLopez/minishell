@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/11 18:41:01 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 12:08:37 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	initialize_env(t_minishell *ms, int ac, char **av, char **env)
 	size_t	i;
 
 	ft_bzero(ms, sizeof(*ms));
-	ft_strcat(ms->hostname, "$");
+	(ms->hostname)[0] = '$';
 	ms->ac = ac;
 	ms->av = av;
 	i = 0;
@@ -35,7 +35,6 @@ void	initialize_env(t_minishell *ms, int ac, char **av, char **env)
 		}
 		i++;
 	}
-	g_env = ms->env;
 	g_ms = ms;
 }
 
@@ -53,17 +52,15 @@ char	*get_from_env(t_minishell *ms, char *var)
 	return (NULL);
 }
 
-int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse)
+int		get_home_path(t_minishell *ms, char *path, char **return_path,
+		int reverse)
 {
 	char	*home_path;
 
 	home_path = get_from_env(ms, "HOME=");
 	if (ft_strlcmp(path, reverse ? "~" : home_path))
-	{
-		*return_path = path;
-		return (0);
-	}
-	if (reverse)
+		*return_path = ft_strdup(path);
+	else if (reverse)
 		*return_path = ft_pathjoin(home_path, path + 1);
 	else if (*(path + ft_strlen(home_path)) == '\0')
 		*return_path = ft_strdup("~");
