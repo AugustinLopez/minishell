@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/12 16:53:58 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 18:20:44 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int			execute_all_commands(t_minishell *ms)
 	i = 0;
 	j = 0;
 	ms->one_cmd = ms->all_cmd;
-	while ((ms->all_cmd)[i])
+	while (ms->all_cmd && (ms->all_cmd)[i])
 	{
 		if ((k = ft_strlen(ms->all_cmd[i])))
 		{

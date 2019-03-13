@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2019/03/12 16:18:42 by aulopez          ###   ########.fr        #
+#    Updated: 2019/03/13 15:56:28 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ ____TO=	atoi itoa atozu
 STRCHR=	strchr strastr strastri strchri \
 		strlen wstrlen wcharlen strcmp \
 		strncmp strlcmp strnchri strstr \
-		strrstr
+		strrstr strrchr
 STRSET=	strcat strncat strclr strcpy \
 		strdel strdup strjoin strnew \
 		strsub strsplit strssplit pathjoin \

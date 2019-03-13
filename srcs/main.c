@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 14:01:29 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 18:33:50 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,39 +93,14 @@ int		main(int ac, char **av, char **env)
 {
 	int			i;
 	t_minishell	ms;
-	char		*tmp;
-	int			j;
 
-	signal(SIGINT, ms_signal_prompt);
+	signal(SIGINT, ms_signal_no_prompt);
 	initialize_env(&ms, ac, av, env);
-	tmp = 0;
-	j = 0;
 	while (1)
 	{
 		ms_free(&ms, 1);
-		show_prompt(&ms);
-		i = ft_gnl(0, &(ms.tmp0));
-		if (i == -1)
-		{
-			ft_dprintf(2, "Error: could not read stdin.\n");
-			ms_exit(&ms, EXIT_FAILURE);
-		}
-		if (ft_iswhitespace(ms.tmp0, 1))
-		{
-			i == 1 && ms.tmp0 ? ft_memdel((void**)&(ms.tmp0)) : 0;
-			i == 0 ? write(1, "\n", 1) : 0;
-			if (i == 0)
-				ms_exit(&ms, EXIT_FAILURE);
-			continue ;
-		}
-		if (!(ms.input = ft_strtrim((ms.tmp0))))
-		{
-			ft_dprintf(2, "Error: not enough memory.\n");
-			continue ;
-		}
-		ms_inputsplit(&ms);
-		//tmp ? ft_memdel((void**)&tmp) : 0;
-		//ms.input ? ft_memdel((void**)&(ms.input)) : 0; //feed_historique here
+		ms_read(&ms);
+		ms_split(&ms);
 		i = execute_all_commands(&ms);
 		if (ms.flags & MSF_BUILTIN_EXIT)
 			break ;

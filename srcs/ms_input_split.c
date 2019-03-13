@@ -6,14 +6,14 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 14:05:25 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 18:26:43 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 #include <minishell.h>
 
-static int			do_i_need_to_read(char **input, int previous)
+/*static int			do_i_need_to_read(char **input, int previous)
 {
 	int option;
 	size_t i;
@@ -41,6 +41,25 @@ static int			do_i_need_to_read(char **input, int previous)
 	return (option);
 }
 
+static int			read_first(t_minishell *ms)
+{
+	int		j;
+
+	signal(SIGINT, ms_signal_btm);
+	j = ft_gnl(0, &(ms->input));
+	if (j == -1)
+	{
+		ft_dprintf(2, "Error: could not read stdin.\n");
+		ms_exit(ms, EXIT_FAILURE);
+	}
+	if (!j)
+	{
+		write(1, "\n", 1);
+		ms_exit(ms, EXIT_FAILURE);
+	}
+	return (1);
+}
+
 static int			read_again(t_minishell *ms, char **tmp, int option)
 {
 	int		j;
@@ -58,43 +77,62 @@ static int			read_again(t_minishell *ms, char **tmp, int option)
 	if (!j)
 	{
 		write(1, "\n", 1);
-		ms_exit(ms, 0);
+		ms_exit(ms, EXIT_FAILURE);
 	}
 	return (1);
 }
-//> echo \
-//> "
-//dquote> "\
-//>
-//corriger ca
+
+int	check_empty_space(char **tmp)
+{
+	size_t	i;
+
+	i = 0;
+	if (!tmp || !*tmp || !**tmp)
+		return (0);
+	while ((*tmp)[i])
+	{
+		if (((*tmp)[i] == '\"' && (*tmp)[i + 1] == '\"')
+			|| ((*tmp)[i] == '\'' && (*tmp)[i + 1] == '\''))
+		{
+			(*tmp)[i] = ' ';
+			(*tmp)[i + 1] = ' ';
+		}
+		i++;
+	}
+	i = 0;
+	while ((*tmp)[i] == ' '
+		|| (*tmp)[i] == 9 || ((*tmp)[i] >= 11 && (*tmp)[i] <= 13))
+		i++;
+	return (i);
+}
+
 int					read_if_needed(t_minishell *ms)
 {
 	char	*tmp;
 	char	*tmp2;
 	int		option;
+	int		mem_option;
+	int		i;
 
+	read_first(ms);
 	option = do_i_need_to_read(&(ms->input), 0);
 	tmp = 0;
 	tmp2 = 0;
 	while (option && read_again(ms, &tmp, option))
 	{
-		if ((option == 3) && tmp[0] == '\\' && ft_iswhitespace(tmp + 1, 1))
-		{
-			tmp ? ft_memdel((void**)&(tmp)) : 0;
-			continue ;
-		}
-		//ft_printf("%d.%s\n",option, tmp);
+		mem_option = do_i_need_to_read(&tmp, option);
+		i = mem_option == 3 ? check_empty_space(&tmp) : 0;
 		if (ms->flags & MSF_BACK_TO_MAIN)
 		{
-			tmp2 = ft_strdup(tmp);
+			tmp2 = ft_strdup(tmp + i);
 			ms_free(ms, 1);
 			ms->flags &= ~MSF_BACK_TO_MAIN;
-			option = 0;
+			mem_option = 0;
 		}
 		else
-			tmp2 = (option != 3) ? ft_sprintf("%s\n%s", ms->input, tmp) :
-				ft_strjoin(ms->input, tmp);
-		option = do_i_need_to_read(&tmp, option);
+			tmp2 = (option != 3) ? ft_sprintf("%s\n%s", ms->input, tmp + i) :
+				ft_strjoin(ms->input, tmp + i);
+		option = mem_option;
 		tmp ? ft_memdel((void**)&tmp) : 0;
 		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
 		if (!tmp2)
@@ -103,13 +141,13 @@ int					read_if_needed(t_minishell *ms)
 	}
 	return (0);
 }
-/*
+
 int				case_semicolon(t_minishell *ms, size_t (*ij)[2], t_list *last)
 {
 
 }*/
 
-int				split_ms(t_minishell *ms)
+int				ms_split(t_minishell *ms)
 {
 	t_list	*begin;
 	t_list	*last;
@@ -194,16 +232,4 @@ int				split_ms(t_minishell *ms)
 	}
 	free(zero);
 	return (0);
-}
-
-void			ms_inputsplit(t_minishell *ms)
-{
-	if (read_if_needed(ms))
-		return ;
-	if (ms->flags & MSF_BACK_TO_MAIN)
-		ms_free(ms, 1);
-		//return (-1);
-	split_ms(ms);
-	if (ms->flags & MSF_BACK_TO_MAIN)
-		ms_free(ms, 1);
 }

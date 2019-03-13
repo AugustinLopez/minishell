@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 13:48:28 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/13 18:33:53 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@
 
 #define MSF_SHOW_PATH_HOME 1
 #define MSF_BUILTIN_EXIT 2
-#define MSF_BACK_TO_MAIN 4
+#define MSF_REINITIALIZE_READER 4
+
 typedef struct		s_minishell
 {
 	int				ac;
@@ -63,10 +64,11 @@ void	ms_free(t_minishell *ms, int option);
 void	ms_exit(t_minishell *ms, int exit_status);
 void	show_prompt(t_minishell *ms);
 void	load_prompt(t_minishell *ms);
-
-void	ms_signal_prompt(int signo);
+void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
-void	ms_signal_btm(int signo);
+int		ms_split(t_minishell *ms);
+int		ms_read(t_minishell *ms);
+
 int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse);
 char	*get_from_env(t_minishell *ms, char *var);
 void	initialize_env(t_minishell *ms, int ac, char **av, char **env);
