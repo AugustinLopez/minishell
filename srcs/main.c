@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 13:51:46 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/14 15:08:24 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ int		main(int ac, char **av, char **env)
 		ms_free(&ms, 1);
 		ms_read(&ms);
 		ms_split(&ms);
+		ms.flags &= ~MSF_NO_MORE_CMD;
 		i = execute_all_commands(&ms);
 		if (ms.flags & MSF_BUILTIN_EXIT)
 			break ;

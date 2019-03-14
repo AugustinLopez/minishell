@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 13:43:08 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/14 15:24:40 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,11 @@ static int	execute_single_command(t_minishell *ms)
 
 	if ((i = is_bin_cmd(ms)))
 		return (i);
+	if (ms->flags & MSF_NO_MORE_CMD)
+	{
+		ms->flags &= ~MSF_NO_MORE_CMD;
+		return (-1);
+	}
 	if ((i = is_builtin_cmd(ms)))
 		return (i);
 	if (lstat((ms->one_cmd)[0], &stat) != -1)
@@ -80,7 +85,8 @@ static int	execute_single_command(t_minishell *ms)
 			return (run_cmd(ms, (ms->one_cmd)[0]));
 		//else if (stat.st_mode & S_IFDIR) // cd
 	}
-	ft_dprintf(2, "%s: command not found.\n", (ms->one_cmd)[0]);
+	if (*(ms->one_cmd) && **(ms->one_cmd))
+		ft_dprintf(2, "%s: command not found.\n", (ms->one_cmd)[0]);
 	return (0);
 }
 
@@ -94,6 +100,8 @@ int			execute_all_commands(t_minishell *ms)
 	char	*tmp;
 
 	i = 0;
+	if ((ms->all_cmd)[0][0] == ';')
+		i++;
 	j = 0;
 	ms->one_cmd = ms->all_cmd;
 	while (ms->all_cmd && (ms->all_cmd)[i])
@@ -123,17 +131,19 @@ int			execute_all_commands(t_minishell *ms)
 		{
 			tmp = (ms->all_cmd)[i];
 			(ms->all_cmd)[i] = NULL;
-			//need to remove possible quote, single quote et '\'
-			ret = execute_single_command(ms);
+			if (j == i)
+				ret = 1;
+			else
+				ret = execute_single_command(ms);
 			if (ret < 0)
 				break ;
-			(ms->all_cmd)[i] = tmp;;
+			(ms->all_cmd)[i] = tmp;
 			ms->one_cmd = (ms->all_cmd) + (i + 1);
 			j = i + 1;
 		}
 		i++;
 	}
-	if (j < i)
+	if (ret >= 0 && j < i)
 		ret = execute_single_command(ms);
 	return (ret);
 }

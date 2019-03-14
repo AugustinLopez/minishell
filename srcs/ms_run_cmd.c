@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 13:54:28 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/14 15:05:41 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int		run_cmd(t_minishell *ms, char *path)
 
 	pid = fork();
 	signal(SIGINT, ms_signal_no_prompt);
+	if (ms->flags & MSF_NO_MORE_CMD)
+		return (1);
 	if (!pid)
 		execve(path, ms->one_cmd, ms->env);
 	else if (pid < 0)
@@ -57,6 +59,8 @@ int		is_bin_cmd(t_minishell *ms)
 	i = 0;
 	while (path[i])
 	{
+		if (ms->flags & MSF_NO_MORE_CMD)
+			return (0);
 		bin = ft_strlcmp((ms->one_cmd)[0], path[i]) ?
 			ft_pathjoin(path[i], *(ms->one_cmd)) : ft_strdup(*(ms->one_cmd));
 		if (!bin)

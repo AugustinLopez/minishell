@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 18:32:55 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/14 15:07:56 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,6 @@ void	ms_signal_no_prompt(int signo)
 		ft_putstr("\n");
 		if (!(g_ms->input))
 			show_prompt(g_ms);
+		g_ms->flags |= MSF_NO_MORE_CMD;
 	}
 }
