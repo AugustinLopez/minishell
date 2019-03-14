@@ -6,192 +6,89 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 18:26:43 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/14 13:55:54 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 #include <minishell.h>
 
-/*static int			do_i_need_to_read(char **input, int previous)
-{
-	int option;
-	size_t i;
 
-	option = (previous == 3) ? 0 : previous;
-	i = 0;
-	while ((*input)[i])
-	{
-		if ((*input)[i] == '\\' && (*input)[i + 1])
-		{
-			i += 2;
-			continue ;
-		}
-		if ((!option || option == 1) && (*input)[i] == '\'')
-			option = !option ? 1 : 0;
-		if ((!option || option == 2) && (*input)[i] == '\"')
-			option = !option ? 2 : 0;
-		if (!option && (*input)[i] == '\\' && !((*input)[i + 1]))
-		{
-			(*input)[i] = 0;
-			return (3);
-		}
-		i++;
-	}
+int				is_there_active_quote(t_minishell *ms, int option, size_t i)
+{
+	if ((!option || option == 1) && (ms->input)[i] == '\"')
+		option = (!option) ? 1 : 0;
+	else if ((!option || option == 2) && (ms->input)[i] == '\'')
+		option = (!option) ? 2 : 0;
 	return (option);
 }
 
-static int			read_first(t_minishell *ms)
+void			case_semicolon(t_minishell *ms, size_t i, size_t j, t_list **elem)
 {
-	int		j;
+	t_list	*tmp;
 
-	signal(SIGINT, ms_signal_btm);
-	j = ft_gnl(0, &(ms->input));
-	if (j == -1)
+	if (j == 0)
 	{
-		ft_dprintf(2, "Error: could not read stdin.\n");
-		ms_exit(ms, EXIT_FAILURE);
+		((char*)((*elem)->pv))[0] = ';';
+		tmp = ft_lstnew(ms->tmp0, (*elem)->zu - i);
+		tmp->zu = (*elem)->zu + 2;
+		(*elem)->zu = 1;
+		(*elem)->next = tmp;
+		(*elem) = tmp;
 	}
-	if (!j)
+	else if (!(i && ms->input[i - 1] == ' '))
 	{
-		write(1, "\n", 1);
-		ms_exit(ms, EXIT_FAILURE);
+		tmp = ft_lstnew(";", 2);
+		tmp->next = ft_lstnew(ms->tmp0, (*elem)->zu - i);
+		tmp->next->zu = (*elem)->zu + 2;
+		(*elem)->zu = j;
+		(*elem)->next = tmp;
+		(*elem) = tmp->next;
 	}
-	return (1);
+	else
+	{
+		((char*)((*elem)->pv))[j] = (ms->input)[i];
+		tmp = ft_lstnew(ms->tmp0, (*elem)->zu - i);
+		tmp->zu = (*elem)->zu + 2;
+		(*elem)->zu = j;
+		(*elem)->next = tmp;
+		(*elem) = tmp;
+	}
+	if (!*elem)
+		ft_dprintf(2, "Error: not enough memory.\n");
 }
-
-static int			read_again(t_minishell *ms, char **tmp, int option)
-{
-	int		j;
-
-	signal(SIGINT, ms_signal_btm);
-	option == 1 ? ft_printf("quote> ") : 0;
-	option == 2 ? ft_printf("dquote> ") : 0;
-	option == 3 ? ft_printf("> ") : 0;
-	j = ft_gnl(0, tmp);
-	if (j == -1)
-	{
-		ft_dprintf(2, "Error: could not read stdin.\n");
-		ms_exit(ms, EXIT_FAILURE);
-	}
-	if (!j)
-	{
-		write(1, "\n", 1);
-		ms_exit(ms, EXIT_FAILURE);
-	}
-	return (1);
-}
-
-int	check_empty_space(char **tmp)
-{
-	size_t	i;
-
-	i = 0;
-	if (!tmp || !*tmp || !**tmp)
-		return (0);
-	while ((*tmp)[i])
-	{
-		if (((*tmp)[i] == '\"' && (*tmp)[i + 1] == '\"')
-			|| ((*tmp)[i] == '\'' && (*tmp)[i + 1] == '\''))
-		{
-			(*tmp)[i] = ' ';
-			(*tmp)[i + 1] = ' ';
-		}
-		i++;
-	}
-	i = 0;
-	while ((*tmp)[i] == ' '
-		|| (*tmp)[i] == 9 || ((*tmp)[i] >= 11 && (*tmp)[i] <= 13))
-		i++;
-	return (i);
-}
-
-int					read_if_needed(t_minishell *ms)
-{
-	char	*tmp;
-	char	*tmp2;
-	int		option;
-	int		mem_option;
-	int		i;
-
-	read_first(ms);
-	option = do_i_need_to_read(&(ms->input), 0);
-	tmp = 0;
-	tmp2 = 0;
-	while (option && read_again(ms, &tmp, option))
-	{
-		mem_option = do_i_need_to_read(&tmp, option);
-		i = mem_option == 3 ? check_empty_space(&tmp) : 0;
-		if (ms->flags & MSF_BACK_TO_MAIN)
-		{
-			tmp2 = ft_strdup(tmp + i);
-			ms_free(ms, 1);
-			ms->flags &= ~MSF_BACK_TO_MAIN;
-			mem_option = 0;
-		}
-		else
-			tmp2 = (option != 3) ? ft_sprintf("%s\n%s", ms->input, tmp + i) :
-				ft_strjoin(ms->input, tmp + i);
-		option = mem_option;
-		tmp ? ft_memdel((void**)&tmp) : 0;
-		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
-		if (!tmp2)
-			return (ms_error(-1, "Error: not enough memory.\n"));
-		ms->input = tmp2;
-	}
-	return (0);
-}
-
-int				case_semicolon(t_minishell *ms, size_t (*ij)[2], t_list *last)
-{
-
-}*/
 
 int				ms_split(t_minishell *ms)
 {
 	t_list	*begin;
 	t_list	*last;
 	t_list	*tmp;
-	char	*zero;
+	t_list	*tmp2;
 	int option;
 	size_t	i;
 	size_t	j;
 	size_t	all;
 
-	option = 0;
 	i = 0;
 	j = 0;
+	option = 0;
 	all = ft_strlen(ms->input);
-	zero = ft_strnew(all);
-	begin = ft_lstnew(zero, all + 1);
+	ms->tmp0 = ft_strnew(all);
+	begin = ft_lstnew(ms->tmp0, all + 1);
+	begin->zu = all + 2;
 	last = begin;
 	while ((ms->input[i]))
 	{
-		if ((!option || option == 1) && (ms->input)[i] == '\"')
-			option = (!option) ? 1 : 0;
-		else if ((!option || option == 2) && (ms->input)[i] == '\'')
-			option = (!option) ? 2 : 0;
-		else if (!option && (ms->input)[i] == ';')
+		option = is_there_active_quote(ms, option, i);
+		if (!option && (ms->input)[i] == ';')
 		{
-			if (!(i && ms->input[i - 1] == ' '))
-			{
-				tmp = ft_lstnew(";", 2);
-				tmp->next = ft_lstnew(zero, all - i++);
-				tmp->next->zu = all + 2;
-				last->zu = j;
-				last->next = tmp;
-				last = tmp->next;
-			}
-			else
-			{
-				((char*)(last->pv))[j] = (ms->input)[i];
-				tmp = ft_lstnew(zero, all - i++);
-				tmp->zu = all + 2;
-				last->zu = j;
-				last->next = tmp;
-				last = tmp;
-			}
+			last->zu = all;
+			case_semicolon(ms, i, j, &last);
 			j = 0;
+			i++;
+			if (!last)
+				break ;
+			continue ;
 		}
 		else if (!option && (ms->input)[i] == '\\')
 		{
@@ -199,19 +96,30 @@ int				ms_split(t_minishell *ms)
 			((char*)(last->pv))[j++] = (ms->input)[i++];
 			continue ;
 		}
-		if (!option && (ms->input)[i] == ' ')
+		if (!option && ft_strchri(" \t\v\r\f", (ms->input)[i]))
 		{
 			if (last->zu == all + 2)
 				last->zu = 0;
 			else
 			{
-				tmp = ft_lstnew(zero, all - i);
+				tmp = ft_lstnew(ms->tmp0, all - i);
+				tmp->zu = all + 2;
 				last->zu = j;
 				last->next = tmp;
+					tmp2 = last;
 				last = tmp;
 				j = 0;
+				while (ft_strchri(" \t\v\r\f", (ms->input)[i]))
+					i++;
+				if (!(ms->input)[i])
+				{
+					ft_lstdelone(&last, &ft_lstfree);
+					last = tmp2;
+					last->next = 0;
+				}
+				continue ; 
 			}
-			while (ms->input[i] == ' ')
+			while (ft_strchri(" \t\v\r\f", (ms->input)[i]))
 				i++;
 			continue ;
 		}
@@ -219,6 +127,12 @@ int				ms_split(t_minishell *ms)
 		((char*)(last->pv))[j++] = (ms->input)[i++];
 	}
 	tmp = begin;
+	while (((char*)(begin->pv))[0] == ';') //might handle this in cmd running mode to reproduce the ';;' behavior with zsh
+	{
+		tmp = begin->next;
+		ft_lstdelone(&begin, *ft_lstfree);
+		begin = tmp;
+	}
 	i = 0;
 	ms->all_cmd ? ft_memdel((void**)&(ms->all_cmd)) : 0;
 	ms->all_cmd = (char **)ft_memalloc(sizeof(*(ms->all_cmd)) * (ft_lstsize(begin) + 1));
@@ -230,6 +144,6 @@ int				ms_split(t_minishell *ms)
 		free(begin);
 		begin = tmp;
 	}
-	free(zero);
+	ms_free(ms, 2);
 	return (0);
 }
