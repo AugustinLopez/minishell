@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/13 18:33:53 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/14 15:54:10 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 #define MSF_SHOW_PATH_HOME 1
 #define MSF_BUILTIN_EXIT 2
 #define MSF_REINITIALIZE_READER 4
+#define MSF_NO_MORE_CMD 8
 
 typedef struct		s_minishell
 {
@@ -52,6 +53,7 @@ typedef struct		s_minishell
 	char			*input;
 	char			**all_cmd;
 	char			**one_cmd;
+	t_list			*cmd;
 	char			*tmp0;
 	char			*tmp1;
 }					t_minishell;
