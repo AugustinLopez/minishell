@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 19:11:32 by aulopez           #+#    #+#             */
-/*   Updated: 2019/02/22 12:22:02 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/18 10:36:39 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void				pf_itoa_base(uintmax_t n, int b, t_printf *pf)
 	pf->padding = pf->length - pf->precision;
 	!(pf->flag & F_ZERO) ? pf_padding(pf, 0) : 0;
 	if ((n || tmp || (char)pf->flag == 'P' || (char)pf->flag == 'p')
-		&& (pf->flag & F_SHARP))
+	&& (pf->flag & F_SHARP))
 	{
 		pf_buffer_write(pf, "0", 1);
 		if (b == 2)

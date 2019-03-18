@@ -57,7 +57,7 @@ void		ft_putnbr_pos_addentum(int **stack, int *i, char **tmp, int dbl_tab)
 	while (*i == dbl_tab - (*stack)[0] + 1 && buf > n && len--)
 		buf /= 10;
 	while (*i == dbl_tab - (*stack)[1] && dot > 0 && n % 10 == 0
-		&& (n /= 10) && len-- && dot--)
+			&& (n /= 10) && len-- && dot--)
 		buf /= 10;
 	while (len--)
 	{
@@ -91,7 +91,7 @@ void		ft_putnbr_pos_addentum2(int **stack, int *i, char **tmp, int dbl_t)
 	while (*i == dbl_t - (*stack)[0] + 1 && buf > n && len--)
 		buf /= 10;
 	while (*i == dbl_t - (*stack)[1]
-		&& dot > 0 && n % 10 == 0 && (n /= 10) && len-- && dot--)
+			&& dot > 0 && n % 10 == 0 && (n /= 10) && len-- && dot--)
 		buf /= 10;
 	while (len--)
 	{

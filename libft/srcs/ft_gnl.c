@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/26 09:58:36 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/07 10:48:31 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/18 10:48:27 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,45 @@ static int		free_mem_and_exit(int option, t_list **neur, char **tmp,
 {
 	if (!option)
 	{
-		(tmp && *tmp) ? free(*tmp) : 0;
-		(alst && *alst) ? ft_lstdel(alst, *ft_lstfree) : 0;
+		if (tmp && *tmp)
+			free(*tmp);
+		if (alst && *alst)
+			ft_lstdel(alst, *ft_lstfree);
 		return (-1);
 	}
 	else
 	{
-		if ((*neur)->pv)
-			free((*neur)->pv);
+		free((*neur)->pv);
 		(*neur)->pv = *tmp;
 	}
+	return (0);
+}
+
+static int		get_from_memory(t_list **neuron, t_list **memory,
+					int fd, char **line)
+{
+	t_list		*temp;
+	char		dummy[1];
+
+	if ((fd < 0 || line == NULL || read(fd, dummy, 0) < 0))
+		return (-1);
+	temp = *memory;
+	while (temp)
+	{
+		if ((int)temp->zu == fd)
+		{
+			*neuron = temp;
+			if ((*neuron)->pv && ft_strchr((char*)((*neuron)->pv), '\n'))
+				return (1);
+			return (0);
+		}
+		temp = temp->next;
+	}
+	if (!(*neuron = ft_lstnew("", 1)))
+		return (-1);
+	(*neuron)->zu = fd;
+	ft_lstadd(memory, *neuron);
+	*neuron = *memory;
 	return (0);
 }
 
@@ -75,7 +104,8 @@ static int		ft_new_line(char **s, char **line, t_list **memory)
 			return (free_mem_and_exit(0, 0, 0, memory));
 		free(*s);
 		*s = temp;
-		!(*s)[0] ? ft_strdel(s) : 0;
+		if (!((*s)[0]))
+			ft_strdel(s);
 	}
 	else if ((*s)[len] == '\0')
 	{
@@ -86,32 +116,7 @@ static int		ft_new_line(char **s, char **line, t_list **memory)
 	return (1);
 }
 
-static int		get_from_memory(t_list **neuron, t_list **memory,
-								int fd, char **line)
-{
-	t_list		*temp;
-
-	temp = *memory;
-	while (temp)
-	{
-		if ((int)temp->zu == fd)
-		{
-			*neuron = temp;
-			if ((*neuron)->pv && ft_strchr((char*)((*neuron)->pv), '\n'))
-				return (1);
-			return (0);
-		}
-		temp = temp->next;
-	}
-	if (!(*neuron = ft_lstnew("\0", 1)))
-		return (-1);
-	(*neuron)->zu = fd;
-	ft_lstadd(memory, *neuron);
-	*neuron = *memory;
-	return (0);
-}
-
-int				ft_gnl(const int fd, char **line)
+int				gnl(const int fd, char **line)
 {
 	static t_list	*memory;
 	t_list			*neur;
@@ -119,16 +124,15 @@ int				ft_gnl(const int fd, char **line)
 	char			*tmp;
 	int				ret;
 
-	ret = (fd < 0 || line == NULL || read(fd, buf, 0) < 0) ? -1 : 0;
-	if (!ret && !(ret = get_from_memory(&neur, &memory, fd, line)))
+	if (!(ret = get_from_memory(&neur, &memory, fd, line)))
 	{
-		while ((ret = read(fd, buf, 4096)) > 0)
+		while ((ret = read(fd, buf, 4096)) && ret != -1)
 		{
 			buf[ret] = '\0';
 			if (!(tmp = ft_strjoin(neur->pv, buf))
-				|| ft_strlen(buf) != (unsigned int)ret)
+			|| ft_strlen(buf) != (unsigned int)ret)
 				return (free_mem_and_exit(0, &neur, 0, &memory));
-			(void)free_mem_and_exit(1, &neur, &tmp, &memory);
+			(void)free_mem_and_exit(1, 0, &tmp, &memory);
 			if (ft_strchr(buf, '\n'))
 				break ;
 		}
