@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 18:04:18 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/25 17:37:58 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,13 +122,15 @@ int				ms_split(t_minishell *ms)
 	elem = ms->cmd;
 	if ((ms_split_loop(ms, &j, &i, &elem)))
 		return (-1);
+	//alias here
 	i = 0;
-	ms->all_cmd = (char **)ft_memalloc(sizeof(*(ms->cmd)) * (ft_lstsize(ms->cmd) + 1));
+	ms->all_cmd = (char **)ft_memalloc(sizeof(char*) * (ft_lstsize(ms->cmd) + 1));
 	elem = ms->cmd;
 	while (elem)
 	{
 		(ms->all_cmd)[i] = (char*)(elem->pv);
 		i++;
+		//ft_printf("%s\n", elem->pv);
 		elem = elem->next;
 		ms->cmd ? ft_memdel((void**)&ms->cmd): 0;
 		ms->cmd = elem;

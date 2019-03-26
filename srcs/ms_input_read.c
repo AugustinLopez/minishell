@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/14 12:31:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 15:56:59 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/26 16:55:21 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ inline static int	ms_gnl(t_minishell *ms, char **tmp, int option)
 	option == 1 ? ft_printf("quote> ") : 0;
 	option == 2 ? ft_printf("dquote> ") : 0;
 	option == 3 ? ft_printf("> ") : 0;
-	j = ft_gnl(0, tmp);
+	j = ft_gnl(0, tmp, 0);
 	if (j == -1)
 	{
 		ft_dprintf(2, "Error: could not read stdin.\n");

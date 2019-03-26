@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 15:54:10 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/26 17:26:31 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,13 @@
 ** unistd : fork, exceve
 ** sys/wait : wait
 ** limits : PATH_MAX. We use getcwd (we shouldn't but whatever).
+** signal : (bonus) signal
+** sys/stat
+** sys/type
+** dirent
 */
 
+#include <libft.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
@@ -27,6 +32,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+
 
 /*
 ** global variable necessary to pass info to signal
@@ -44,7 +50,8 @@ typedef struct		s_minishell
 {
 	int				ac;
 	char			**av;
-	char			**env;
+	t_list			*env;
+	char			**arr_env;
 	int				flags;
 	char			hostname[HOSTNAME_SIZE + 1];
 	char			*curr_path;
@@ -70,6 +77,8 @@ void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
 int		ms_split(t_minishell *ms);
 int		ms_read(t_minishell *ms);
+
+int		need_new_prompt(void);
 
 int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse);
 char	*get_from_env(t_minishell *ms, char *var);

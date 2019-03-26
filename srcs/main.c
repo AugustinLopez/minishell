@@ -6,14 +6,12 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 15:08:24 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/26 17:30:04 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 #include <minishell.h>
-
-//Pensez a remettre les pointeurs a 0 une fois free si necessaire
 
 int	ms_error(int ret, char *s)
 {
@@ -21,13 +19,20 @@ int	ms_error(int ret, char *s)
 	return (ret);
 }
 
+/*
+** option == 0 : free everything
+** option == 1 : free current command cycle
+** option == 2 : free temp variable
+*/
+
 void	ms_free(t_minishell *ms, int option)
 {
 	if (!option)
 	{
-		ms->env ? ft_free_sarray(&(ms->env)) : 0;
+		ms->env ? ft_lstdel(&(ms->env), *ft_lstfree) : 0;
+		ms->arr_env ? ft_memdel((void**)&(ms->arr_env)) : 0;
 		ms->curr_path ? ft_memdel((void**)&(ms->curr_path)) : 0;
-		ft_gnl(-1, NULL);
+		ft_gnl(-1, NULL, 0);
 	}
 	if (option <= 1)
 	{
@@ -45,7 +50,7 @@ void	ms_exit(t_minishell *ms, int exit_status)
 }
 
 /*
-** Show prompt can be called by signal_handler
+** Show_prompt can be called by signal_handler
 ** So i make this function as simple as possible
 */
 
@@ -53,36 +58,30 @@ void	show_prompt(t_minishell *ms)
 {
 	if ((ms->flags & MSF_SHOW_PATH_HOME) && ms->curr_path)
 	{
-		ft_putstr(FT_CYAN);
-		ft_putstr(FT_BOLD);
+		ft_putstr(FT_CYAN FT_BOLD);
 		ft_putstr(ms->hostname);
-		ft_putstr(">:");
-		ft_putstr(FT_EOC);
-		ft_putstr(FT_CYAN);
+		ft_putstr(">:" FT_EOC FT_CYAN);
 		ft_putstr(ms->curr_path);
-		ft_putchar(' ');
-		ft_putstr(FT_EOC);
+		ft_putstr(" " FT_EOC);
 	}
 	else
 	{
-		ft_putstr(FT_CYAN);
-		ft_putstr(FT_BOLD);
+		ft_putstr(FT_CYAN FT_BOLD);
 		ft_putstr(ms->hostname);
-		ft_putstr("> ");
-		ft_putstr(FT_EOC);
+		ft_putstr("> " FT_EOC);
 	}
 }
 
 void	load_prompt(t_minishell *ms)
 {
 
-	char	buff[4096 + 1];
+	char	buff[PATH_MAX * 4 + 1];
 	char	*curr_dir;
 
 	ms->curr_path ? ft_memdel((void**)&(ms->curr_path)) : 0;
 	if ((ms->flags & MSF_SHOW_PATH_HOME))
 	{
-		if (!(curr_dir = getcwd(buff, 4096)))
+		if (!(curr_dir = getcwd(buff, PATH_MAX * 4)))
 			ft_dprintf(2, "Error: could not get path to current directory.\n");
 		else
 			get_home_path(ms, curr_dir, &(ms->curr_path), 0);

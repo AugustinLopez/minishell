@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/14 15:05:41 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/26 17:26:22 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int		run_cmd(t_minishell *ms, char *path)
 	if (ms->flags & MSF_NO_MORE_CMD)
 		return (1);
 	if (!pid)
-		execve(path, ms->one_cmd, ms->env);
+		execve(path, ms->one_cmd, ms->arr_env);
 	else if (pid < 0)
 		return (ms_error(-1, "Error : failed to fork the process.\n"));
 	wait(&pid);

@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/12 11:06:27 by aulopez           #+#    #+#              #
-#    Updated: 2019/03/13 18:34:33 by aulopez          ###   ########.fr        #
+#    Updated: 2019/03/26 12:16:38 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,17 @@ NAME=minishell
 
 # --- 1.Source/Header ----------------------------------------------------------
 
-SRC=main ms_input_read ms_env_info ms_bonus_signal ms_run_cmd ms_bonus_builtin ms_parse_cmd ms_input_split
-HDR=libft.h minishell.h
+SRC=main \
+	ms_input_read \
+	ms_env_info \
+	ms_bonus_signal \
+	ms_run_cmd \
+	ms_bonus_builtin \
+	ms_parse_cmd \
+	ms_input_split \
+	bonus_cursor
+HDR=libft.h \
+	minishell.h
 
 # --- 2.Path -------------------------------------------------------------------
 
