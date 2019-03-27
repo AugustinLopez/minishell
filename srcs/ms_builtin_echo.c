@@ -1,37 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_bonus_signal.c                                  :+:      :+:    :+:   */
+/*   ms_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 10:40:49 by aulopez          ###   ########.fr       */
+/*   Created: 2019/03/27 18:07:39 by aulopez           #+#    #+#             */
+/*   Updated: 2019/03/27 18:52:56 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
 #include <minishell.h>
 
-void	ms_signal_reinitialize(int signo)
+int	ms_echo(t_minishell *ms)
 {
-	if (signo == SIGINT)
-	{
-		//signal(SIGINT, ms_signal_reinitialize);
-		ft_putstr("\n");
-		show_prompt(g_ms);
-		g_ms->flags |= MSF_REINITIALIZE_READER;
-	}
-}
+	size_t	i;
+	size_t	j;
+	char	*tmp;
 
-void	ms_signal_no_prompt(int signo)
-{
-	if (signo == SIGINT)
+	i = 1;
+	j = 0;
+	if (!ft_strcmp((ms->one_cmd)[1], "-n"))
+		j = 1;
+	i += j;
+	while ((ms->one_cmd)[i])
 	{
-		//signal(SIGINT, ms_signal_no_prompt);
-		ft_putstr("\n");
-		if (!(g_ms->input))
-			show_prompt(g_ms);
-		g_ms->flags |= MSF_NO_MORE_CMD;
+		if ((tmp = ft_strrstr((ms->one_cmd)[i], "\\c")))
+			*tmp = 0;
+		ft_putstr((ms->one_cmd)[i++]);
+		if (tmp)
+		{
+			*tmp = '\\';
+			break ;
+		}
+		if ((ms->one_cmd)[i])
+			write(1, " ", 1);
 	}
+	!j && !tmp ? write(1, "\n", 1) : 0;
+	return (1);
 }

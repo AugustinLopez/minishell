@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 10:21:01 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 10:41:20 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 18:45:29 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	show_prompt(t_minishell *ms)
 	}
 }
 
-void	load_prompt(t_minishell *ms)
+int		load_prompt(t_minishell *ms)
 {
 	char	buff[PATH_MAX + 1];
 	char	*curr_dir;
@@ -47,8 +47,12 @@ void	load_prompt(t_minishell *ms)
 	if ((ms->flags & MSF_SHOW_PATH_HOME))
 	{
 		if (!(curr_dir = getcwd(buff, PATH_MAX)))
+		{
 			ft_dprintf(2, "Error: could not get path to current directory.\n");
+			return (1);
+		}
 		else
 			get_home_path(ms, curr_dir, &(ms->curr_path), 0);
 	}
+	return (0);
 }

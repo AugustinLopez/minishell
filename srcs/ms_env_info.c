@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 11:45:25 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 18:46:19 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,8 @@ int		get_home_path(t_minishell *ms, char *path, char **return_path,
 	else
 		*return_path = ft_pathjoin("~", path + ft_strlen(home_path));
 	if (*return_path)
-		return (1);
+		return (0);
 	else
 		ft_dprintf(2, "Error: not enough memory to get home path.\n");
-	return (0);
+	return (1);
 }

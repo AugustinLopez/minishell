@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 11:05:59 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 15:30:54 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 17:47:19 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,19 @@ static inline int	ms_read_loop(t_minishell *ms, int option)
 {
 	int	new_option;
 
-	new_option = ms_continue_reading(&(ms->tmp0), option);
 	if (ms->flags & MSF_REINITIALIZE_READER)
 	{
+		new_option = ms_continue_reading(&(ms->tmp0), 0);
 		ms->tmp1 = ft_strdup((ms->tmp0));
-		ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
 		ms->flags &= ~MSF_REINITIALIZE_READER;
-		new_option = 0;
 	}
 	else
+	{
+		new_option = ms_continue_reading(&(ms->tmp0), option);
 		ms->tmp1 = (option != 3) ?
 			ft_sprintf("%s\n%s", ms->input, ms->tmp0) :
 			ft_strjoin(ms->input, ms->tmp0);
+	}
 	ms->input ? ft_memdel((void**)&(ms->input)) : 0;
 	ms->input = ms->tmp1;
 	ms->tmp1 = 0;

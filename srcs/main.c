@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 16:28:39 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 18:04:02 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,6 @@ int		ms_error(int ret, char *s)
 {
 	ft_dprintf(2, "%s", s);
 	return (ret);
-}
-
-void	ms_exit(t_minishell *ms, int exit_status)
-{
-	ms_free(ms, 0);
-	exit(exit_status);
 }
 
 /*

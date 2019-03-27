@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 16:27:07 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 18:45:45 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ typedef struct stat	t_stat;
 
 int		ms_initialize(t_minishell *ms, int ac, char **av, char **env);
 
-void	load_prompt(t_minishell *ms);
+int		load_prompt(t_minishell *ms);
 void	show_prompt(t_minishell *ms);
 
 int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse);
@@ -78,7 +78,8 @@ char	*get_from_env(t_minishell *ms, char *var);
 
 int		ms_error(int ret, char *s);
 void	ms_free(t_minishell *ms, int option);
-void	ms_exit(t_minishell *ms, int exit_status);
+void	ms_exit(t_minishell *ms);
+int		ms_echo(t_minishell *ms);
 void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
 int		ms_split(t_minishell *ms);

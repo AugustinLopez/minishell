@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 16:31:59 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 17:07:46 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j, int *opt
 
 static inline int	ms_iterate_over_input(t_minishell *ms)
 {
-	int	option;
-	int	special_case;
+	int		option;
+	int		special_case;
 	size_t	i;
 	size_t	j;
 
@@ -136,11 +136,7 @@ static inline int	ms_list_to_array(t_minishell *ms)
 	return (0);
 }
 
-/*
-** put alias after split_loop and before list_to_array. Careful: may contain backslash, quote, etc
-*/
-
-int						ms_split(t_minishell *ms)
+int					ms_split(t_minishell *ms)
 {
 	ms_free(ms, 2);
 	if (!(ms->tmp0 = ft_strnew(ft_strlen(ms->input))))

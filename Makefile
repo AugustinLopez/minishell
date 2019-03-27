@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/12 11:06:27 by aulopez           #+#    #+#              #
-#    Updated: 2019/03/27 16:31:36 by aulopez          ###   ########.fr        #
+#    Updated: 2019/03/27 18:25:53 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,12 +18,13 @@ SRC=main \
 	ms_prompt \
 	ms_read \
 	ms_split \
+	ms_builtin_exit \
+	ms_builtin_echo \
 	ms_env_info \
-	ms_bonus_signal \
+	ms_signal \
 	ms_run_cmd \
 	ms_bonus_builtin \
-	ms_parse_cmd \
-	bonus_cursor
+	ms_parse_cmd
 HDR=libft.h \
 	minishell.h
 
