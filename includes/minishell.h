@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/26 17:26:31 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 16:27:07 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-
 /*
 ** global variable necessary to pass info to signal
 */
@@ -58,21 +57,28 @@ typedef struct		s_minishell
 	char			*historique[HISTO_SIZE];
 	int				histo_begin;
 	char			*input;
+	t_list			*cmd;
 	char			**all_cmd;
 	char			**one_cmd;
-	t_list			*cmd;
 	char			*tmp0;
 	char			*tmp1;
+	t_list			*elem;
 }					t_minishell;
 
 t_minishell *g_ms;
 typedef struct stat	t_stat;
 
+int		ms_initialize(t_minishell *ms, int ac, char **av, char **env);
+
+void	load_prompt(t_minishell *ms);
+void	show_prompt(t_minishell *ms);
+
+int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse);
+char	*get_from_env(t_minishell *ms, char *var);
+
 int		ms_error(int ret, char *s);
 void	ms_free(t_minishell *ms, int option);
 void	ms_exit(t_minishell *ms, int exit_status);
-void	show_prompt(t_minishell *ms);
-void	load_prompt(t_minishell *ms);
 void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
 int		ms_split(t_minishell *ms);
@@ -80,13 +86,11 @@ int		ms_read(t_minishell *ms);
 
 int		need_new_prompt(void);
 
-int		get_home_path(t_minishell *ms, char *path, char **return_path, int reverse);
-char	*get_from_env(t_minishell *ms, char *var);
-void	initialize_env(t_minishell *ms, int ac, char **av, char **env);
+
 int		run_cmd(t_minishell *ms, char *path);
 int		is_bin_cmd(t_minishell *ms);
 int		builtin_mspath(t_minishell *ms);
 int		builtin_msname(t_minishell *ms);
-int		execute_all_commands(t_minishell *ms);
+int		ms_execute_all(t_minishell *ms);
 void	ms_inputsplit(t_minishell *ms);
 #endif

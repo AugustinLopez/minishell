@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/26 17:28:46 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 16:28:37 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,47 +115,71 @@ static int	execute_single_command(t_minishell *ms)
 	return (0);
 }
 
-int			execute_all_commands(t_minishell *ms)
+//bonus_semicolon
+
+/*int			execute_with_semicolon(t_minishell *ms)
+{
+	size_t	i;
+
+	ms_free(ms, 2);
+	ms->one_cmd = ms->all_cmd;
+	i = 0;
+	while ((ms->all_cmd)[i])
+	{
+		
+	}
+}*/
+
+int			remove_unused_escape_quote(char **src, char **new)
+{
+	int		ret;
+	size_t	i;
+	size_t	j;
+
+	ret = 0;
+	j = 0;
+	i = 0;
+	while ((*src)[j])
+	{
+		if (!ret && (*src)[j] == '\\')
+			j++;
+		else if (ft_strchr("\'\"",(*src)[j]))
+		{
+			ret = 1;
+			j++;
+			continue;
+		}
+		(*new)[i++] = (*src)[j++];
+	}
+	(*new)[i] = 0;
+	free(*src);
+	*src = *new;
+	*new = NULL;
+	return (ret);
+}
+
+int			ms_execute_all(t_minishell *ms)
 {
 	size_t	i;
 	size_t	j;
 	size_t	k;
-	size_t	l;
 	int		ret;
-	char	*tmp;
 
+	ms_free(ms, 2);
 	ret = 0;
 	i = 0;
-	while (ms->all_cmd && (ms->all_cmd)[i] && (ms->all_cmd)[i][0] == ';')
-		i++;
-	j = i;
-	ms->one_cmd = (ms->all_cmd + i);
-	while (ms->all_cmd && (ms->all_cmd)[i])
+	j = 0;
+	ms->one_cmd = ms->all_cmd;
+	while ((ms->all_cmd)[i])
 	{
-		if ((k = ft_strlen(ms->all_cmd[i])))
-		{
-			ret = 0;
-			tmp = ft_strnew(k);
-			l = 0;
-			k = 0;
-			while ((ms->all_cmd[i][l]))
-			{
-				if (!ret && ms->all_cmd[i][l] == '\\')
-					l++;
-				if (ft_strchr("\'\"",(ms->all_cmd)[i][l]))
-				{
-					ret = 1;
-					l++;
-					continue;
-				}
-				tmp[k++] = (ms->all_cmd)[i][l++];
-			}
-			free((ms->all_cmd)[i]);
-			(ms->all_cmd)[i] = tmp;
-		}
+		k = ft_strlen(ms->all_cmd[i]);
+		if (k && !(ms->tmp0 = ft_strnew(k)))
+			return (-1);
+		if (k)
+			ret = remove_unused_escape_quote(&(ms->all_cmd[i]), &(ms->tmp0));
 		if ((ms->all_cmd)[i][0] == ';')
 		{
-			tmp = (ms->all_cmd)[i];
+			ms->tmp0 = (ms->all_cmd)[i];
 			(ms->all_cmd)[i] = NULL;
 			if (j == i)
 				ret = 1;
@@ -163,7 +187,8 @@ int			execute_all_commands(t_minishell *ms)
 				ret = execute_single_command(ms);
 			if (ret < 0)
 				break ;
-			(ms->all_cmd)[i] = tmp;
+			(ms->all_cmd)[i] = ms->tmp0;
+			ms->tmp0 = NULL;
 			ms->one_cmd = (ms->all_cmd) + (i + 1);
 			j = i + 1;
 		}

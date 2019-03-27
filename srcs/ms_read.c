@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_input_read.c                                    :+:      :+:    :+:   */
+/*   ms_read.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/14 12:31:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/26 16:55:21 by aulopez          ###   ########.fr       */
+/*   Created: 2019/03/27 11:05:59 by aulopez           #+#    #+#             */
+/*   Updated: 2019/03/27 15:30:54 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
 #include <minishell.h>
 
-inline static int	ms_gnl(t_minishell *ms, char **tmp, int option)
+static inline int	ms_gnl(t_minishell *ms, char **tmp, int option)
 {
 	int		j;
 
@@ -24,19 +23,13 @@ inline static int	ms_gnl(t_minishell *ms, char **tmp, int option)
 	option == 3 ? ft_printf("> ") : 0;
 	j = ft_gnl(0, tmp, 0);
 	if (j == -1)
-	{
-		ft_dprintf(2, "Error: could not read stdin.\n");
-		ms_exit(ms, EXIT_FAILURE);
-}
+		return (ms_error(1, "Fatal error: could not read from stdin.\n"));
 	if (!j)
-	{
-		write(1, "\n", 1);
-		ms_exit(ms, EXIT_FAILURE);
-	}
-	return (1);
+		return (ms_error(1, "\n"));
+	return (0);
 }
 
-inline static int	ms_do_i_continue(char **input, int previous)
+static inline int	ms_continue_reading(char **input, int previous)
 {
 	int		option;
 	size_t	i;
@@ -64,11 +57,11 @@ inline static int	ms_do_i_continue(char **input, int previous)
 	return (option);
 }
 
-inline static int	ms_read_loop(t_minishell *ms, int option)
+static inline int	ms_read_loop(t_minishell *ms, int option)
 {
 	int	new_option;
 
-	new_option = ms_do_i_continue(&(ms->tmp0), option);
+	new_option = ms_continue_reading(&(ms->tmp0), option);
 	if (ms->flags & MSF_REINITIALIZE_READER)
 	{
 		ms->tmp1 = ft_strdup((ms->tmp0));
@@ -92,13 +85,16 @@ int					ms_read(t_minishell *ms)
 {
 	int	option;
 
-	ms_gnl(ms, &(ms->input), 0);
-	option = ms_do_i_continue(&(ms->input), 0);
-	while (option && ms_gnl(ms, &(ms->tmp0), option))
+	if (ms_gnl(ms, &(ms->input), 0))
+		return (1);
+	option = ms_continue_reading(&(ms->input), 0);
+	while (option)
 	{
+		if (ms_gnl(ms, &(ms->tmp0), option))
+			return (1);
 		option = ms_read_loop(ms, option);
 		if (option == -1)
-			return (ms_error(-1, "Error: not enough memory.\n"));
+			return (ms_error(1, "Error: not enough memory.\n"));
 	}
 	return (0);
 }

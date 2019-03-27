@@ -6,52 +6,63 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/26 17:27:40 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/27 11:45:25 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
 #include <minishell.h>
 
-void	initialize_env(t_minishell *ms, int ac, char **av, char **env)
+/*
+** currently av and ac are unused.
+*/
+
+inline static int	set_list(t_minishell *ms, t_list **elem, char *str)
+{
+	if (!(*elem))
+	{
+		if (!(*elem = ft_lstnew(0, 0)))
+			return (0);
+		ms->env = *elem;
+	}
+	else
+	{
+		if (!((*elem)->next = ft_lstnew(0, 0)))
+			return (0);
+		*elem = (*elem)->next;
+	}
+	if (!((*elem)->pv = ft_strdup(str)))
+		return (0);
+	return (1);
+}
+
+int					ms_initialize(t_minishell *ms, int ac, char **av,
+									char **env)
 {
 	size_t	i;
 	t_list	*tmp;
 
 	ft_bzero(ms, sizeof(*ms));
+	g_ms = ms;
 	(ms->hostname)[0] = '$';
 	ms->ac = ac;
 	ms->av = av;
-	i = 0;
 	tmp = NULL;
+	i = 0;
 	while (env[i])
 		i++;
-	ms->arr_env = (char **)ft_memalloc(sizeof(char *) * (i + 1));
+	if (!(ms->arr_env = (char **)ft_memalloc(sizeof(char *) * (i + 1))))
+		return (ms_error(1, "Fatal error: not enough memory to launch.\n"));
 	i = 0;
 	while (env[i])
 	{
-		if (!tmp)
-		{
-			tmp = ft_lstnew(0, 0);
-			ms->env = tmp;
-		}
-		else
-		{
-			tmp->next = ft_lstnew(0, 0);
-			tmp = tmp->next;
-		}
-		if (!(tmp->pv = ft_strdup(env[i])))
-		{
-			ft_dprintf(2,"Error: not enough memory to initialize minishell.\n");
-			ms_exit(ms, EXIT_FAILURE);
-		}
-		(ms->arr_env)[i] = (char*)(tmp->pv);
-		i++;
+		if (!(set_list(ms, &tmp, env[i])))
+			return (ms_error(1, "Fatal error: not enough memory to launch.\n"));
+		(ms->arr_env)[i++] = (char*)(tmp->pv);
 	}
-	g_ms = ms;
+	return (0);
 }
 
-char	*get_from_env(t_minishell *ms, char *var)
+char				*get_from_env(t_minishell *ms, char *var)
 {
 	size_t	i;
 	t_list	*tmp;
@@ -72,7 +83,7 @@ char	*get_from_env(t_minishell *ms, char *var)
 }
 
 int		get_home_path(t_minishell *ms, char *path, char **return_path,
-		int reverse)
+						int reverse)
 {
 	char	*home_path;
 
@@ -88,6 +99,6 @@ int		get_home_path(t_minishell *ms, char *path, char **return_path,
 	if (*return_path)
 		return (1);
 	else
-		ft_dprintf(2, "Error: not enough memory.\n");
+		ft_dprintf(2, "Error: not enough memory to get home path.\n");
 	return (0);
 }
