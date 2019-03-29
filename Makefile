@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/12 11:06:27 by aulopez           #+#    #+#              #
-#    Updated: 2019/03/27 18:25:53 by aulopez          ###   ########.fr        #
+#    Updated: 2019/03/29 15:18:13 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ SRC=main \
 	ms_env_info \
 	ms_signal \
 	ms_run_cmd \
-	ms_bonus_builtin \
+	ms_builtin_bonus \
 	ms_parse_cmd
 HDR=libft.h \
 	minishell.h

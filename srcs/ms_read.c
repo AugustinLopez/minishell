@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 11:05:59 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 17:47:19 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/29 12:48:57 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ static inline int	ms_continue_reading(char **input, int previous)
 	{
 		if ((*input)[i] == '\\' && (*input)[i + 1])
 		{
-			i += 2;
+			i++;
+			if (option != 1)
+				i++;
 			continue ;
 		}
 		if ((!option || option == 1) && (*input)[i] == '\'')

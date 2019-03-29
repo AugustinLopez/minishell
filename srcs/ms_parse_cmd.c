@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 18:52:58 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/29 15:53:35 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,7 @@ static int	execute_single_command(t_minishell *ms)
 	int		i;
 
 	if (ms->flags & MSF_NO_MORE_CMD)
-	{
-		ms->flags &= ~MSF_NO_MORE_CMD;
 		return (-1);
-	}
 	if ((i = is_builtin_cmd(ms)))
 		return (i);
 	if ((i = is_bin_cmd(ms)))
@@ -77,78 +74,45 @@ static int	execute_single_command(t_minishell *ms)
 		//else if (stat.st_mode & S_IFDIR) // cd
 	}
 	if (*(ms->one_cmd) && **(ms->one_cmd))
-		ft_dprintf(2, "%s: command not found.\n", (ms->one_cmd)[0]);
+		ft_dprintf(2, "minishell: command not found: %s\n", (ms->one_cmd)[0]);
 	return (0);
-}
-
-int			clean_quote(char **src, char **new)
-{
-	int		ret;
-	size_t	i;
-	size_t	j;
-
-	ret = 0;
-	j = 0;
-	i = 0;
-	while ((*src)[j])
-	{
-		if (!ret && (*src)[j] == '\\')
-			j++;
-		else if (ft_strchr("\'\"",(*src)[j]))
-		{
-			ret = 1;
-			j++;
-			continue;
-		}
-		(*new)[i++] = (*src)[j++];
-	}
-	ret = (ret == 1) || ((*src)[0] == '\\') ? 1 : 0;
-	(*new)[i] = 0;
-	free(*src);
-	*src = *new;
-	*new = NULL;
-	return (ret);
 }
 
 int			execute_command_among_other(t_minishell *ms, size_t i, size_t *j)
 {
-	char	*save;
 	int		ret;
 
-	save = (ms->all_cmd)[i];
 	(ms->all_cmd)[i] = NULL;
 	if (*j == i)
-		ret = 1;
+		ret = 0;
 	else
 		ret = execute_single_command(ms);
-	(ms->all_cmd)[i] = save;
+	(ms->all_cmd)[i] = ms->elem->pv;
 	ms->one_cmd = (ms->all_cmd) + (i + 1);
 	*j = i + 1;
 	return (ret);
 }
 
-int			ms_execute_all(t_minishell *ms)
+int			ms_execute(t_minishell *ms)
 {
 	size_t	i;
 	size_t	j;
-	size_t	k;
 	int		ret;
+	//ms->elem MAY be shared : should probably use a variable here.
 
 	ms_free(ms, 2);
 	ret = 0;
 	i = 0;
 	j = 0;
 	ms->one_cmd = ms->all_cmd;
-	while ((ms->all_cmd)[i])
+	ms->elem = ms->cmd;
+	while (ms->elem)
 	{
-		k = ft_strlen(ms->all_cmd[i]);
-		if (k && !(ms->tmp0 = ft_strnew(k)))
-			return (ms_error(-1, "Error: not enough memory to parse command.\n"));
-		ret = (k != 0) ? clean_quote(&(ms->all_cmd[i]), &(ms->tmp0)) : 0;
-		if (!ret && (ms->all_cmd)[i][0] == ';')
-			if ((ret = execute_command_among_other(ms, i, &j) < 0))
+		if (ms->elem->zu == ';')
+			if ((ret = execute_command_among_other(ms, i, &j)) < 0)
 				break ;
 		i++;
+		ms->elem = ms->elem->next;
 	}
 	if (ret < 0)
 		return (ret);

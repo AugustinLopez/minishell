@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_bonus_quote.c                                   :+:      :+:    :+:   */
+/*   ms_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/11 17:17:30 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 17:07:46 by aulopez          ###   ########.fr       */
+/*   Created: 2019/03/29 14:54:53 by aulopez           #+#    #+#             */
+/*   Updated: 2019/03/29 14:55:28 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,12 @@ static inline int	case_whitespace(t_minishell *ms, size_t *j, size_t *i)
 		*j = 0;
 		(ms->tmp0)[*i] = ' ';
 	}
-	while (ft_strchri(" \t\v\r\f", (ms->input)[*i]))
+	while (ft_strchri(" \t", (ms->input)[*i]))
 		(*i)++;
 	return  (1);
 }
 
-static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j, int *option)
+static inline int	ms_parse_input_loop(t_minishell *ms, size_t *i, size_t *j, int *option)
 {
 	int	special_case;
 	
@@ -77,7 +77,7 @@ static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j, int *opt
 			(ms->tmp0)[(*j)++] = (ms->input)[(*i)++];
 			special_case = !(ms->input)[(*i)] ? 1 : 0;
 		}
-		else if (ft_strchri(" \t\v\r\f", (ms->input)[*i]))
+		else if (ft_strchri(" \t", (ms->input)[*i]))
 			special_case = case_whitespace(ms, j, i);
 		if (special_case == -1)
 			return (-1);
@@ -87,7 +87,7 @@ static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j, int *opt
 	return (special_case);
 }
 
-static inline int	ms_iterate_over_input(t_minishell *ms)
+static inline int	ms_parse_input(t_minishell *ms)
 {
 	int		option;
 	int		special_case;
@@ -100,7 +100,7 @@ static inline int	ms_iterate_over_input(t_minishell *ms)
 	option = 0;
 	ms->elem = ms->cmd;
 	while (ms->input[i])
-		if ((special_case = ms_parse_input(ms, &i, &j, &option)) == -1)
+		if ((special_case = ms_parse_input_loop(ms, &i, &j, &option)) == -1)
 			return (1);
 	if (j && !special_case)
 	{
@@ -109,6 +109,55 @@ static inline int	ms_iterate_over_input(t_minishell *ms)
 		if (!(ms->elem->pv))
 			return (1);
 		ms->elem->zu = j;
+	}
+	return (0);
+}
+
+static inline int			remove_quote(char **src, char **new)
+{
+	int		ret;
+	size_t	i;
+	size_t	j;
+
+	ret = 0;
+	j = 0;
+	i = 0;
+	while ((*src)[j])
+	{
+		if (!ret && (*src)[j] == '\\')
+			j++;
+		else if (ft_strchr("\'\"",(*src)[j]))
+		{
+			ret = 1;
+			j++;
+			continue;
+		}
+		(*new)[i++] = (*src)[j++];
+	}
+	ret = (ret == 1) || ((*src)[0] == '\\') ? 1 : 0;
+	(*new)[i] = 0;
+	free(*src);
+	*src = *new;
+	*new = NULL;
+	return (ret);
+}
+
+static inline int	ms_handle_quoting(t_minishell *ms)
+{
+	char	c;
+
+	ms->elem = ms->cmd;
+	while (ms->elem)
+	{
+		if (ms->elem->pv && (((char *)(ms->elem->pv))[0]))
+		{
+			c = ((char *)(ms->elem->pv))[0];
+			if (!(ms->tmp0 = ft_strnew(ft_strlen((char *)(ms->elem->pv)))))
+				return (1);
+			remove_quote(((char **)&(ms->elem->pv)), &(ms->tmp0));
+			ms->elem->zu = c;
+		}
+		ms->elem = ms->elem->next;
 	}
 	return (0);
 }
@@ -128,10 +177,7 @@ static inline int	ms_list_to_array(t_minishell *ms)
 	{
 		(ms->all_cmd)[i] = (char*)(ms->elem->pv);
 		i++;
-		ms->elem = ms->cmd;
-		ms->cmd = ms->cmd->next;
-		ms->elem ? ft_memdel((void**)&ms->elem): 0;
-		ms->elem = ms->cmd;
+		ms->elem=ms->elem->next;
 	}
 	return (0);
 }
@@ -143,7 +189,9 @@ int					ms_split(t_minishell *ms)
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));
 	if (!(ms->cmd = ft_lstnew(0, 0)))
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));
-	if ((ms_iterate_over_input(ms)))
+	if ((ms_parse_input(ms)))
+		return (ms_error(1, "Error: not enough memory to parse command.\n"));
+	if ((ms_handle_quoting(ms)))
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));
 	if (ms_list_to_array(ms))
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));

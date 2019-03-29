@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 18:45:45 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/03/29 15:17:38 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,6 @@ int		run_cmd(t_minishell *ms, char *path);
 int		is_bin_cmd(t_minishell *ms);
 int		builtin_mspath(t_minishell *ms);
 int		builtin_msname(t_minishell *ms);
-int		ms_execute_all(t_minishell *ms);
+int		ms_execute(t_minishell *ms);
 void	ms_inputsplit(t_minishell *ms);
 #endif
