@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 14:54:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/29 14:55:28 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 13:28:54 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,9 @@ static inline int	ms_handle_quoting(t_minishell *ms)
 		if (ms->elem->pv && (((char *)(ms->elem->pv))[0]))
 		{
 			c = ((char *)(ms->elem->pv))[0];
-			if (!(ms->tmp0 = ft_strnew(ft_strlen((char *)(ms->elem->pv)))))
+			if (!(ms->tmp1 = ft_strnew(ft_strlen((char *)(ms->elem->pv)))))
 				return (1);
-			remove_quote(((char **)&(ms->elem->pv)), &(ms->tmp0));
+			remove_quote(((char **)&(ms->elem->pv)), &(ms->tmp1));
 			ms->elem->zu = c;
 		}
 		ms->elem = ms->elem->next;
@@ -191,6 +191,7 @@ int					ms_split(t_minishell *ms)
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));
 	if ((ms_parse_input(ms)))
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));
+	ms_free(ms, 2);
 	if ((ms_handle_quoting(ms)))
 		return (ms_error(1, "Error: not enough memory to parse command.\n"));
 	if (ms_list_to_array(ms))

@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/29 15:53:35 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 14:06:58 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ static int	is_builtin_cmd(t_minishell *ms)
 		ms_exit(ms);
 	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
 		return (ms_echo(ms));
+	if (!ft_strcmp((ms->one_cmd)[0], "cd"))
+		return (ms_cd(ms));
+	if (!ft_strcmp((ms->one_cmd)[0], "setenv"))
+		return (ms_setenv(ms));
+	if (!ft_strcmp(ms->one_cmd[0], "unsetenv"))
+		return (ms_unsetenv(ms));
 	if (!ft_strcmp((ms->one_cmd)[0], "msname"))
 		return (builtin_msname(ms));
 	if (!ft_strcmp((ms->one_cmd)[0], "mspath"))
@@ -49,7 +55,7 @@ static int	is_builtin_cmd(t_minishell *ms)
 		if ((ms->one_cmd)[2])
 		{
 			ft_dprintf(2, "setenv: too many arguments.\n");
-			return (0);
+			return (1);
 		}
 		return (1);
 	}
@@ -98,7 +104,6 @@ int			ms_execute(t_minishell *ms)
 	size_t	i;
 	size_t	j;
 	int		ret;
-	//ms->elem MAY be shared : should probably use a variable here.
 
 	ms_free(ms, 2);
 	ret = 0;

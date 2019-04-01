@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:03:02 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 18:05:32 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 11:09:00 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,6 @@ void	ms_exit(t_minishell *ms)
 	if ((ms->one_cmd)[1])
 		j = ft_atoi(ms->one_cmd[1]);
 	ms_free(ms, 0);
+	ms->ret = j;
 	exit(j);
 }

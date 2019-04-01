@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 15:39:50 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/29 15:53:44 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 11:56:02 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,6 @@ int	ms_env(t_minishell *ms)
 		ft_putendl((char *)(temp->pv));
 		temp = temp->next;
 	}*/
-	return (0);
+	ms->ret = 0;
+	return (1);
 }
