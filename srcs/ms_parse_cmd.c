@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 14:06:58 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 16:11:07 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 static int	is_builtin_cmd(t_minishell *ms)
 {
-	t_list	*temp;
-
 	if (!ft_strcmp((ms->one_cmd)[0], "exit"))
 		ms_exit(ms);
 	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
@@ -30,35 +28,6 @@ static int	is_builtin_cmd(t_minishell *ms)
 		return (builtin_msname(ms));
 	if (!ft_strcmp((ms->one_cmd)[0], "mspath"))
 		return (builtin_mspath(ms));
-	if (!ft_strcmp((ms->one_cmd)[0], "env"))
-	{
-		temp = ms->env;
-		while (temp)
-		{
-			ft_putendl((char *)(temp->pv));
-			temp = temp->next;
-		}
-		return (1);
-	}
-	if (!ft_strcmp((ms->one_cmd)[0], "setenv"))
-	{
-		if (!(ms->one_cmd)[1])
-		{
-			temp = ms->env;
-			while (temp)
-			{
-				ft_putendl((char *)(temp->pv));
-				temp = temp->next;
-			}
-			return (1);
-		}
-		if ((ms->one_cmd)[2])
-		{
-			ft_dprintf(2, "setenv: too many arguments.\n");
-			return (1);
-		}
-		return (1);
-	}
 	return (0);
 }
 
@@ -75,12 +44,18 @@ static int	execute_single_command(t_minishell *ms)
 		return (i);
 	if (lstat((ms->one_cmd)[0], &stat) != -1)
 	{
-		if (stat.st_mode & S_IXUSR)
+		if ((stat.st_mode & S_IXUSR))
 			return (run_cmd(ms, (ms->one_cmd)[0]));
-		//else if (stat.st_mode & S_IFDIR) // cd
+		// in run_cmd
+		ft_dprintf(2, "minishell: permission denied: %s\n", (ms->one_cmd)[0]);
+		ms->ret = 126;
+		return (0);
 	}
 	if (*(ms->one_cmd) && **(ms->one_cmd))
+	{
 		ft_dprintf(2, "minishell: command not found: %s\n", (ms->one_cmd)[0]);
+		ms->ret = 127;
+	}
 	return (0);
 }
 

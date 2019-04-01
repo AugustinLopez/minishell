@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 14:54:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 13:28:54 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 19:04:50 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,52 @@ static inline int	case_whitespace(t_minishell *ms, size_t *j, size_t *i)
 	return  (1);
 }
 
+/*static inline int	case_dollar(t_minishell *ms, size_t *j, size_t *i)
+{
+	int	k;
+	int	l;
+	t_list	*tmp;
+	char	*str;
+
+	k = *i;
+	while (ft_isalnum((ms->input)[*i]) || (ms->input)[*i] == '_')
+		(*i)++;
+	tmp = ms->env;
+	while (tmp)
+	{
+		if (ft_strcmp(tmp->pv, ms->input + k) == '=')
+			break ;
+		tmp = tmp->next;
+	}
+	if (tmp)
+	{
+		l = ft_strlen(ft_strchr(tmp->pv, '='));
+		ft_printf("|%d %d %s|\n", *j, l, ms->tmp0);
+		str = ft_strnew(ft_strlen(ms->input) + l);
+		str = ft_strcat(ms->tmp0, ft_strchr(tmp->pv, '=') + 1);
+		free(ms->tmp0);
+		ms->tmp0 = str;
+		*j = ft_strlen(ms->tmp0);
+	}
+	if (!(ms->input[*i]))
+		return (1);
+	return (0);
+}*/
+
 static inline int	ms_parse_input_loop(t_minishell *ms, size_t *i, size_t *j, int *option)
 {
 	int	special_case;
 	
 	special_case = 0;
-	if (!(*option = case_quote(ms, *option, *i)))
+	*option = case_quote(ms, *option, *i);
+	/*if (*option < 2 && (ms->input)[*i] == '$')
+	{
+		(*i)++;
+		special_case = case_dollar(ms, j, i);
+		ft_printf("%s\n", ms->tmp0);
+		return (special_case);
+	}*/
+	if (!*option)
 	{
 		if ((ms->input)[*i] == ';')
 			special_case = case_semicolon(ms, j, i);
@@ -82,6 +122,8 @@ static inline int	ms_parse_input_loop(t_minishell *ms, size_t *i, size_t *j, int
 		if (special_case == -1)
 			return (-1);
 	}
+	/*if (*option == 1 && ms->input[*i] == '\\' && !((ms->input)[*i + 1] == '$'))
+		(ms->tmp0)[(*j)++] = (ms->input)[(*i)++];*/
 	if (!special_case)
 		(ms->tmp0)[(*j)++] = (ms->input)[(*i)++];
 	return (special_case);
@@ -162,6 +204,58 @@ static inline int	ms_handle_quoting(t_minishell *ms)
 	return (0);
 }
 
+/*static inline int	ms_replace_dollar(t_minishell *ms, int i)
+{
+	char	*s1;
+	char	*s2;
+	char	*name;
+	char	*value;
+	t_list	*tmp;
+
+	tmp = ms->env;
+	while (tmp)
+	{
+		
+	}
+}*/
+
+/*static inline int	ms_handle_dollar(t_minishell *ms)
+{
+	int	i;
+	int	j;
+	int	k;
+	char	*s;
+
+	ms->elem = ms->cmd;
+	while (ms->elem)
+	{
+		if (ms->elem->pv && (((char *)(ms->elem->pv))[0]) && ms->elem->zu != '\'')
+		{
+			i = 0;
+			k = 0;
+			s = (char *)(ms->elem->pv);
+			while ((i = ft_strchri(s + k, '$')))
+			{
+				if (i != 1)
+				{
+					j = 1;
+					while (j < i && ((char *)(ms->elem->pv + i + k - j))[0] == '\\')
+						j++;
+				ft_printf("%d %d\n", i, j);
+					if (!(j % 2))
+						ft_printf("Hello\n");
+				}
+				else
+					ft_printf("Hello\n");
+				k += i + 1;
+			}
+		}
+		ms->elem = ms->elem->next;
+	}
+	return (0);
+}*/
+
+
 static inline int	ms_list_to_array(t_minishell *ms)
 {
 	size_t	i;
@@ -182,20 +276,23 @@ static inline int	ms_list_to_array(t_minishell *ms)
 	return (0);
 }
 
+
 int					ms_split(t_minishell *ms)
 {
 	ms_free(ms, 2);
 	if (!(ms->tmp0 = ft_strnew(ft_strlen(ms->input))))
-		return (ms_error(1, "Error: not enough memory to parse command.\n"));
+		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
 	if (!(ms->cmd = ft_lstnew(0, 0)))
-		return (ms_error(1, "Error: not enough memory to parse command.\n"));
-	if ((ms_parse_input(ms)))
-		return (ms_error(1, "Error: not enough memory to parse command.\n"));
+		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
+	if (ms_parse_input(ms))
+		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
 	ms_free(ms, 2);
-	if ((ms_handle_quoting(ms)))
-		return (ms_error(1, "Error: not enough memory to parse command.\n"));
+	if (ms_handle_quoting(ms))
+		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
+	/*if (ms_handle_dollar(ms))
+		return (ms_error(1, "minishell: not enough memory to parse input.\n"));*/
 	if (ms_list_to_array(ms))
-		return (ms_error(1, "Error: not enough memory to parse command.\n"));
+		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
 	ms_free(ms, 2);
 	return (0);
 }

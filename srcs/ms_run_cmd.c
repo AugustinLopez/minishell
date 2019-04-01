@@ -6,17 +6,36 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/26 17:26:22 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 16:48:19 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 #include <minishell.h>
 
+void	bonus_return(t_minishell *ms, int status)
+{
+	int	i;
+
+	i = 0;
+	if (WIFEXITED(status))
+		ms->ret = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		ms->ret = 128 + WTERMSIG(status);
+		ft_dprintf(2, "minishell: core dumped: ");
+		while (ms->one_cmd[i])
+			ft_dprintf(2, " %s", ms->one_cmd[i++]);
+		ft_dprintf(2,"\n");
+	}
+}
+
 int		run_cmd(t_minishell *ms, char *path)
 {
 	pid_t	pid;
+	int		status;
 
+	status = 0;
 	pid = fork();
 	signal(SIGINT, ms_signal_no_prompt);
 	if (ms->flags & MSF_NO_MORE_CMD)
@@ -24,8 +43,9 @@ int		run_cmd(t_minishell *ms, char *path)
 	if (!pid)
 		execve(path, ms->one_cmd, ms->arr_env);
 	else if (pid < 0)
-		return (ms_error(-1, "Error : failed to fork the process.\n"));
-	wait(&pid);
+		return (ms_error(-1, "Error: failed to fork the process.\n"));
+	waitpid(pid, &status, 0);
+	bonus_return(ms, status);
 	return (1);
 }
 
@@ -54,8 +74,10 @@ int		is_bin_cmd(t_minishell *ms)
 	char	**path;
 	t_stat	stat;
 
+	if (!get_from_env(ms, "PATH="))
+		return (0);
 	if (!(path = ft_strsplit(get_from_env(ms, "PATH="), ':')))
-		return (ms_error(-1, "Error: not enough memory.\n"));
+		return (ms_error(1, "Error: not enough memory.\n"));
 	i = 0;
 	while (path[i])
 	{
@@ -64,7 +86,7 @@ int		is_bin_cmd(t_minishell *ms)
 		bin = ft_strlcmp((ms->one_cmd)[0], path[i]) ?
 			ft_pathjoin(path[i], *(ms->one_cmd)) : ft_strdup(*(ms->one_cmd));
 		if (!bin)
-			return (ms_error(-1, "Error: not enough memory.\n"));
+			return (ms_error(1, "Error: not enough memory.\n"));
 		if (lstat(bin, &stat) < 0)
 			ft_memdel((void*)&bin);
 		else

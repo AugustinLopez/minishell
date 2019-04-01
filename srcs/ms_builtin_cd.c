@@ -6,25 +6,80 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:32:06 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 11:50:26 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 16:12:40 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-int	change_dir(char *path, int flags)
+t_list	*cd_set(char *name, char *value)
+{
+	t_list	*tmp;
+
+	tmp = ft_lstnew(0, 0);
+	if (!tmp || !(tmp->pv = ft_strjoin(name, value)))
+	{
+		ft_lstdelone(&tmp, *ft_lstfree);
+		return (0);
+	}
+	return (tmp);
+}
+
+void	cd_setenv(t_minishell *ms, t_list *list)
+{
+	t_list	*tmp;
+
+	tmp = ms->env;
+	while (tmp)
+	{
+		if (!ft_strncmp(tmp->pv, list->pv, ft_strchri(list->pv, '=') - 1))
+		{
+			free(tmp->pv);
+			tmp->pv = list->pv;
+			list->pv = 0;
+			ft_lstdelone(&list, *ft_lstfree);
+			return ;
+		}
+		tmp = tmp->next;
+	}
+	if (!ms->env)
+		ms->env = list;
+	else
+		ft_lstadd(&(ms->env), list);
+}
+
+int	change_dir(t_minishell *ms, char *path, int flags)
 {
 	char	*cwd;
 	char	buff[4096 + 1];
+	t_list	*list;
 
-	(void)cwd;
-	(void)buff;
 	(void)path;
 	(void)flags;
-	ft_printf("%s\n", path);
+	cwd = getcwd(buff, 4096);
+	list = cd_set("OLDPWD=", cwd);
+	if (!chdir(path))
+	{
+		cwd = getcwd(buff, 4096);
+		if (flags & 512)
+			ft_printf("%s\n", cwd);
+		list->next = cd_set("PWD=", cwd);
+		cd_setenv(ms, list->next);
+		cd_setenv(ms, list);
+	}
+	else
+	{
+		ft_putstr_fd("cd: ", 2);
+		if (access(path, F_OK) == -1)
+			ft_putstr_fd("no such file or directory: ", 2);
+		else if (access(path, R_OK) == -1)
+			ft_putstr_fd("permission denied: ", 2);
+		else
+			ft_putstr_fd("not a directory: ", 2);
+		ft_putendl_fd(path, 2);
+		return (1);
+	}
 	return (0);
-	/*cwd = getcwd(buff, 4096);
-	if (!chdir*/
 }
 
 int cd_available_option(char *av, int *flags)
@@ -58,6 +113,7 @@ int	cd_parsing(t_minishell *ms, int *flags)
 			*flags = i;
 			return (-1);
 		}
+		i++;
 	}
 	return (i);
 }
@@ -72,22 +128,24 @@ int	ms_cd(t_minishell *ms)
 	home_path = get_from_env(ms, "HOME=");
 	if ((ac = cd_parsing(ms, &flags)) < 0)
 	{
-		ft_dprintf(2, "cd: bad argument: %s\n", ms->one_cmd[ac]);
+		ft_dprintf(2, "cd: invalid argument: %s\n", ms->one_cmd[flags]);
 		return (1);
 	}
 	if (!(ms->one_cmd[ac]))
 	{
-		change_dir(home_path, flags);
+		if (!home_path)
+			return (1);
+		change_dir(ms, home_path, flags);
 		return (1);
 	}
 	if (ms->one_cmd[ac + 1])
-		return (ms_error(1, "cd: too many arguments"));
+		return (ms_error(1, "cd: too many arguments\n"));
 	if (ms->one_cmd[ac][0] == '-' && !ms->one_cmd[ac][1])
 	{
 		flags += 512;
-		change_dir(get_from_env(ms, "OLDPWD="), flags);
+		change_dir(ms, get_from_env(ms, "OLDPWD="), flags);
 		return (1);
 	}
-	change_dir(ms->one_cmd[ac], flags);
+	change_dir(ms, ms->one_cmd[ac], flags);
 	return (1);
 }

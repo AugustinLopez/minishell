@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/29 15:23:06 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 19:04:53 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int		main(int ac, char **av, char **env)
 			break ;
 		if ((err = ms_split(&ms)))
 			break ;
-		if (ms.all_cmd)
+		if (ms.cmd && (ms.cmd->pv))
 			i = ms_execute(&ms);
 		if (ms.flags & MSF_NO_MORE_CMD)
 			continue ;

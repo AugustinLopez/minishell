@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 11:05:59 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/29 12:48:57 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/01 16:55:52 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static inline int	ms_gnl(t_minishell *ms, char **tmp, int option)
 	option == 3 ? ft_printf("> ") : 0;
 	j = ft_gnl(0, tmp, 0);
 	if (j == -1)
-		return (ms_error(1, "Fatal error: could not read from stdin.\n"));
+		return (ms_error(1, "minishell: could not read from stdin.\n"));
 	if (!j)
 		return (ms_error(1, "\n"));
 	return (0);
@@ -97,7 +97,7 @@ int					ms_read(t_minishell *ms)
 			return (1);
 		option = ms_read_loop(ms, option);
 		if (option == -1)
-			return (ms_error(1, "Error: not enough memory.\n"));
+			return (ms_error(1, "minishell: not enough memory to read.\n"));
 	}
 	return (0);
 }
