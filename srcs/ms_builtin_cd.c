@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:32:06 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 16:12:40 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/02 14:10:31 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ int	change_dir(t_minishell *ms, char *path, int flags)
 		if (flags & 512)
 			ft_printf("%s\n", cwd);
 		list->next = cd_set("PWD=", cwd);
+		if (ms->flags & MSF_SHOW_PATH_HOME)
+			get_home_path(ms, cwd, &(ms->curr_path), 0);
 		cd_setenv(ms, list->next);
 		cd_setenv(ms, list);
 	}

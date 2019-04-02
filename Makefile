@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/12 11:06:27 by aulopez           #+#    #+#              #
-#    Updated: 2019/04/01 14:04:20 by aulopez          ###   ########.fr        #
+#    Updated: 2019/04/02 11:22:25 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ SRC=main \
 	ms_prompt \
 	ms_read \
 	ms_split \
+	ms_split_to_argv \
 	ms_builtin_exit \
 	ms_builtin_setenv \
 	ms_builtin_unsetenv \

@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/01 11:56:17 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 14:04:08 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/02 13:03:40 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,21 @@ int		setenv_change(t_minishell *ms, t_list *start)
 {
 	t_list	*tmp;
 	t_list	*tmpenv;
+	char	*s;
 
 	tmp = start;
 	while (tmp)
 	{
+		s = ft_strchr(tmp->pv, '=');
+		s[0] = 0;
 		tmpenv = ms->env;
 		while (tmpenv)
 		{
-			if (ft_strcmp(tmp->pv, tmpenv->pv) == '=')
+			if (ft_strcmp(tmpenv->pv, tmp->pv) == '=')
 				break ;
 			tmpenv = tmpenv->next;
 		}
+		s[0] = '=';
 		if (tmpenv)
 		{
 			free(tmpenv->pv);

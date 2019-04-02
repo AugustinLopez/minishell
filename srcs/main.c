@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 19:04:53 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/02 11:25:09 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	ms_free(t_minishell *ms, int option)
 	}
 	ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
 	ms->tmp1 ? ft_memdel((void**)&(ms->tmp1)) : 0;
+	ms->elem = 0;
 }
 
 int		main(int ac, char **av, char **env)

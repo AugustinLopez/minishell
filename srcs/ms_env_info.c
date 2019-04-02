@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/27 18:46:19 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/02 14:04:22 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ int		get_home_path(t_minishell *ms, char *path, char **return_path,
 	char	*home_path;
 
 	home_path = get_from_env(ms, "HOME=");
+	if (!home_path)
+		return (1);
 	if (ft_strlcmp(path, reverse ? "~" : home_path))
 		*return_path = ft_strdup(path);
 	else if (reverse)

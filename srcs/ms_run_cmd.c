@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 16:48:19 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/02 14:19:52 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,13 @@ int		run_cmd(t_minishell *ms, char *path)
 {
 	pid_t	pid;
 	int		status;
+	t_stat	st;
 
+	if (stat(path, &st) < 0)
+	{
+		ft_printf("minishell: invalid command\n");
+		return (1);
+	}
 	status = 0;
 	pid = fork();
 	signal(SIGINT, ms_signal_no_prompt);
@@ -43,7 +49,7 @@ int		run_cmd(t_minishell *ms, char *path)
 	if (!pid)
 		execve(path, ms->one_cmd, ms->arr_env);
 	else if (pid < 0)
-		return (ms_error(-1, "Error: failed to fork the process.\n"));
+		return (ms_error(-1, "minishell: failed to fork the process.\n"));
 	waitpid(pid, &status, 0);
 	bonus_return(ms, status);
 	return (1);

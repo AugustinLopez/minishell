@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/01 13:48:46 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 14:06:55 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/02 13:05:18 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,11 @@ int	ms_unsetenv(t_minishell *ms)
 					ms->env = ms->env->next;
 					ft_lstdelone(&tmp, *ft_lstfree);
 				}
-				tmp2->next = tmp->next;
-				ft_lstdelone(&tmp, *ft_lstfree);
+				else
+				{
+					tmp2->next = tmp->next;
+					ft_lstdelone(&tmp, *ft_lstfree);
+				}
 			}
 			if (tmp)
 			{
