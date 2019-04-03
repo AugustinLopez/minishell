@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 14:04:22 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 16:09:59 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,8 @@ int					ms_initialize(t_minishell *ms, int ac, char **av,
 	tmp = NULL;
 	i = 0;
 	while (env[i])
-		i++;
-	if (!(ms->arr_env = (char **)ft_memalloc(sizeof(char *) * (i + 1))))
-		return (ms_error(1, "Fatal error: not enough memory to launch.\n"));
-	i = 0;
-	while (env[i])
-	{
-		if (!(set_list(ms, &tmp, env[i])))
+		if (!(set_list(ms, &tmp, env[i++])))
 			return (ms_error(1, "Fatal error: not enough memory to launch.\n"));
-		(ms->arr_env)[i++] = (char*)(tmp->pv);
-	}
 	return (0);
 }
 

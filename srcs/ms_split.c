@@ -6,68 +6,11 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 14:54:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 13:35:00 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 19:04:10 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
-
-static inline int			remove_quote(char **src, char **new)
-{
-	int		ret;
-	size_t	i;
-	size_t	j;
-
-	ret = 0;
-	j = 0;
-	i = 0;
-	while ((*src)[j])
-	{
-		if ((*src)[j] == '\'' && (ret == 0 || ret == 1))
-		{
-			ret = (ret == 0) ? 1 : 0;
-			j++;
-			continue ;
-		}
-		if ((*src)[j] == '\"' && (ret == 0 || ret == 2))
-		{
-			ret = (ret == 0) ? 2 : 0;
-			j++;
-			continue ;
-		}
-		if (!ret && (*src)[j] == '\\')
-			j++;
-		if (ret == 2 && (*src)[j] == '\\' && ft_strchr("\"\\", (*src)[j + 1]))
-			j++;
-		(*new)[i++] = (*src)[j++];
-	}
-	ret = (ret == 1) || ((*src)[0] == '\\') ? 1 : 0;
-	(*new)[i] = 0;
-	free(*src);
-	*src = *new;
-	*new = NULL;
-	return (ret);
-}
-
-static inline int	ms_handle_quoting(t_minishell *ms)
-{
-	char	c;
-
-	ms->elem = ms->cmd;
-	while (ms->elem)
-	{
-		if (ms->elem->pv && (((char *)(ms->elem->pv))[0]))
-		{
-			c = ((char *)(ms->elem->pv))[0];
-			if (!(ms->tmp1 = ft_strnew(ft_strlen((char *)(ms->elem->pv)))))
-				return (1);
-			remove_quote(((char **)&(ms->elem->pv)), &(ms->tmp1));
-			ms->elem->zu = c;
-		}
-		ms->elem = ms->elem->next;
-	}
-	return (0);
-}
 
 static inline int	ms_list_to_array(t_minishell *ms)
 {
@@ -104,7 +47,8 @@ static inline int	ansi_value(char *str, char **result)
 	while (s[i])
 		if (ft_strchr("\'\"\\~$", str[i++]))
 			j++;
-	*result = ft_strnew(i + j);
+	if (!(*result = ft_strnew(i + j)))
+		return (0);
 	i = 0;
 	j = 0;
 	while (s[i])
@@ -116,12 +60,111 @@ static inline int	ansi_value(char *str, char **result)
 	return (1);
 }
 
+static inline int	no_replace(t_minishell *ms, int quote, size_t *i)
+{
+	char	*str;
+	char	*tmp;
+
+	str = (char *)(ms->elem->pv);
+	if (quote == '\'' || (str[*i] != '$' && str[*i] != '\\'))
+	{
+		(*i)++;
+		return (1);
+	}
+	if (str[*i] == '\\')
+	{
+		if (str[*i + 1] == '$')
+		{
+			str[*i] = 0;
+			if (!(tmp = ft_strjoin(str, str + *i + 1)))
+				return (2);
+			free(ms->elem->pv);
+			ms->elem->pv = tmp;
+			return (1);
+		}
+		(*i) += 2;
+		return (1);
+	}
+	return (0);
+}
+
+static inline t_list	*find_replacement(t_list *env, char *str, size_t *j)
+{
+	char	c;
+	t_list	*tmp;
+
+	*j = 1;
+	while (ft_isalnum(str[*j]) || str[*j] == '_')
+		(*j)++;
+	c = str[*j];
+	str[*j] = 0;
+	tmp = env;
+	while (tmp)
+	{
+		if (ft_strcmp(tmp->pv, str + 1) == '=')
+			break ;
+		tmp = tmp->next;
+	}
+	str[*j] = c;
+	return (tmp);
+}
+
+static inline int		no_replacement(t_minishell *ms, size_t i, size_t j)
+{
+	char	*str;
+	char	*tmp;
+	char	*val;
+
+	str = (char *)(ms->elem->pv);
+	if (str[i + 1] == '?')
+	{
+		if (!(val = ft_itoa(ms->ret)))
+			return (1);
+	}
+	else
+		val = NULL;
+	str[i] = 0;
+	if (val)
+		tmp = ft_sprintf("%s%s%s", str, val, str + i + 2);
+	else
+		tmp = ft_strjoin(str, str + i + j);
+	if (val)
+		free(val);
+	if (!tmp)
+		return (1);
+	ft_memdel((void **)&(ms->elem->pv));
+	ms->elem->pv = tmp;
+	return (0);
+}
+
+static inline int	replacement(t_minishell *ms, size_t i, size_t j, int quote)
+{
+	char	*str;
+	char	*tmp;
+	char	*val;
+
+	str = (char *)(ms->elem->pv);
+	str[i] = 0;
+	if (!ansi_value(ms->tmp0, &val))
+	{
+		ms->tmp0 = 0;
+		return (1);
+	}
+	if (quote == '\"')
+		tmp = ft_sprintf("%s\"%s\"%s", str, val, str + i + j);
+	else
+		tmp = ft_sprintf("%s%s%s", str, val, str + i + j);
+	if (val)
+		free(val);
+	ft_memdel((void **)&(ms->elem->pv));
+	ms->elem->pv = tmp;
+	ms->tmp0 = 0;
+	return (0);
+}
+
 static inline int	find_and_replace_dollar(t_minishell *ms)
 {
 	char	*str;
-	char	*s;
-	char	*value;
-	char	c;
 	int		quote;
 	size_t	i;
 	size_t	j;
@@ -132,68 +175,33 @@ static inline int	find_and_replace_dollar(t_minishell *ms)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '\\' && str[i + 1] != '$' && !(quote == '\\'))
-		{
-			i += 2;
-			continue ;
-		}
-		if (str[i] == '\\' && str[i + 1] == '$' && !(quote == '\''))
-		{
-			str[i] = 0;
-			s = ft_strjoin(str, str + i + 1);
-			free(ms->elem->pv);
-			ms->elem->pv = s;
-			continue ;
-		}
-		if (str[i] == '\'' && !(quote == '\''))
-			quote = (quote == 0) ? '\'' : 0;
-		if (str[i] == '\'' && !(quote == '\"'))
+		if (str[i] == '\"' && !(quote == '\''))
 			quote = (quote == 0) ? '\"' : 0;
-		if (quote == '\'' || str[i] != '$')
+		if (str[i] == '\'' && !(quote == '\"'))
+			quote = (quote == 0) ? '\'' : 0;
+		if ((j = no_replace(ms, quote, &i)))
 		{
-			i++;
+			str = (char *)(ms->elem->pv);
+			if (j == 2)
+				return (1);
 			continue ;
 		}
-		j = 1;
-		while (ft_isalnum(str[i + j]) || str[i] == '_')
-			j++;
-		c = str[i + j];
-		str[i + j] = 0;
-		tmp = ms->env;
-		while (tmp)
-		{
-			if (ft_strcmp(tmp->pv, str + i + 1) == '=')
-				break ;
-			tmp = tmp->next;
-		}
-		str[i + j] = c;
+			str = (char *)(ms->elem->pv);
+		tmp = find_replacement(ms->env, str + i, &j);
 		if (!tmp)
 		{
-			if (j == 1 && c == '?')
-				value = ft_itoa(ms->ret);
-			else
-				value = NULL;
-			str[i] = 0;
-			if (value)
-				s = ft_sprintf("%s%s%s", str, value, str + i + j + 1);
-			else
-				s = ft_strjoin(str, str + i + j);
-			free(ms->elem->pv);
-			ms->elem->pv = s;
+			if (no_replacement(ms, i, j))
+				return (1);
 		}
 		else
 		{
-			str[i] = 0;
-			ansi_value(tmp->pv, &value);
-			if (quote == '\"')
-				s = ft_sprintf("%s\"%s\"%s", str, value, str + i + j);
-			else
-				s = ft_sprintf("%s%s%s", str, value, str + i + j);
-			free(ms->elem->pv);
-			ms->elem->pv = s;
+			ms->tmp0 = tmp->pv;
+			if (replacement(ms, i, j, quote))
+				return (1);
 		}
+		str = (char *)(ms->elem->pv);
 	}
-	return (1);
+	return (0);
 }
 
 static inline int	find_and_replace_tilde(t_minishell *ms)
@@ -220,22 +228,29 @@ static inline int	find_and_replace_tilde(t_minishell *ms)
 	else
 		s = get_from_env(ms, "OLDPWD=");
 	if (!s)
+		return (0);
+	if (!(s = ft_strjoin(s, str + i)))
 		return (1);
-	s = ft_strjoin(s, str + i);
 	free(ms->elem->pv);
 	ms->elem->pv = s;
-	return (1);
+	return (0);
 }
 
 static inline int	ms_handle_dollar(t_minishell *ms)
 {
-	ms->elem = ms->cmd;
+	ms_free(ms, 2);
+	ms->elem = ms->cmd->next;
 	while (ms->elem)
 	{
-		if (ms->elem->pv && ft_strchr(ms->elem->pv, '$'))
-			find_and_replace_dollar(ms);
+		if (ms->elem->pv
+			&& ft_strcmp(ms->elem->pv, "$") && ft_strchr(ms->elem->pv, '$'))
+		{
+			if (find_and_replace_dollar(ms))
+				return (1);
+		}
 		if (ms->elem->pv && ((char *)(ms->elem->pv))[0] == '~')
-			find_and_replace_tilde(ms);
+			if (find_and_replace_tilde(ms))
+				return (1);
 		ms->elem = ms->elem->next;
 	}
 	return (0);
@@ -243,18 +258,14 @@ static inline int	ms_handle_dollar(t_minishell *ms)
 
 int					ms_split(t_minishell *ms)
 {
-	ms_free(ms, 2);
-	if (ms_split_to_argv(ms))
+	if (ms_split_to_list(ms))
 		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
-	ms_free(ms, 2);
 	if (ms_handle_dollar(ms))
 		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
-	if (ms_handle_quoting(ms))
+	if (ms_split_remove_quote(ms))
 		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
 	if (ms_list_to_array(ms))
 		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
 	ms_free(ms, 2);
 	return (0);
 }
-
-

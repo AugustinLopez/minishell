@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_split_in_argv.c                                 :+:      :+:    :+:   */
+/*   ms_split_in_list.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/02 11:15:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 11:22:41 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 17:22:46 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ static inline int	case_whitespace(t_minishell *ms, size_t *j, size_t *i)
 	return  (1);
 }
 
-static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j, int *option)
+static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j,
+									int *option)
 {
 	int	special_case;
 	
@@ -88,13 +89,14 @@ static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j, int *opt
 	return (special_case);
 }
 
-int			ms_split_to_argv(t_minishell *ms)
+int			ms_split_to_list(t_minishell *ms)
 {
 	int		option;
 	int		special_case;
 	size_t	i;
 	size_t	j;
 
+	ms_free(ms, 2);
 	ms->tmp0 = ft_strnew(ft_strlen(ms->input));
 	if (!ms->tmp0 || !(ms->cmd = ft_lstnew(0, 0)))
 		return (1);
@@ -112,7 +114,6 @@ int			ms_split_to_argv(t_minishell *ms)
 		ms->elem->pv = ft_strdup(ms->tmp0);
 		if (!(ms->elem->pv))
 			return (1);
-		ms->elem->zu = j;
 	}
 	return (0);
 }

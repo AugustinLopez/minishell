@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 11:23:12 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 17:15:16 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ int		ms_cd(t_minishell *ms);
 void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
 int		ms_split(t_minishell *ms);
-int		ms_split_to_argv(t_minishell *ms);
+int		ms_split_to_list(t_minishell *ms);
+int		ms_split_remove_quote(t_minishell *ms);
 int		ms_read(t_minishell *ms);
 
 int		need_new_prompt(void);

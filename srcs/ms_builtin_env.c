@@ -6,33 +6,13 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/03 14:24:44 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 14:29:40 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 16:25:21 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-int		setenv_error_check(t_minishell *ms)
-{
-	int		i;
-	char	*s;
-
-	i = 1;
-	while (ms->one_cmd[i])
-	{
-		if (!(s = ft_strchr(ms->one_cmd[i], '=')) || ft_strchr(s + 1, '='))
-		{
-			ft_putstr_fd("setenv: ", 2);
-			return (ms_error(1, "argument format is not \'name=value\'\n"));
-		}
-		if (!(s[1]))
-			return (ms_error(1, "setenv: variable cannot be set as NUL\n"));
-		i++;
-	}
-	return (0);
-}
-
-int		setenv_change(t_minishell *ms, t_list *start)
+/*int		env_change(t_list *env, t_list *start)
 {
 	t_list	*tmp;
 	t_list	*tmpenv;
@@ -43,7 +23,7 @@ int		setenv_change(t_minishell *ms, t_list *start)
 	{
 		s = ft_strchr(tmp->pv, '=');
 		s[0] = 0;
-		tmpenv = ms->env;
+		tmpenv = env;
 		while (tmpenv)
 		{
 			if (ft_strcmp(tmpenv->pv, tmp->pv) == '=')
@@ -64,19 +44,22 @@ int		setenv_change(t_minishell *ms, t_list *start)
 		{
 			start = tmp;
 			tmp = tmp->next;
-			ft_lstadd(&(ms->env), start);
+			start = 0;
+			tmpenv = env;
+
 		}
 	}
 	return (0);
 }
 
-int		setenv_mem_check(t_minishell *ms, t_list **tmp, t_list **start, char ***arr)
+int		env_mem_check(t_minishell *ms, t_list **tmp, t_list **start)
 {
 	int	i;
 
-	i = 0;
-	while (ms->one_cmd[++i])
+	while (ms->one_cmd[0])
 	{
+		if (!ft_strchr(ms->one_cmd[0], '=') || (ms->one_cmd[0][0] == '='))
+			return (0);
 		if (!*tmp)
 		{
 			*tmp = ft_lstnew(0,0);
@@ -87,31 +70,28 @@ int		setenv_mem_check(t_minishell *ms, t_list **tmp, t_list **start, char ***arr
 			(*tmp)->next = ft_lstnew(0,0);
 			*tmp = (*tmp)->next;
 		}
-		if (!*tmp || !((*tmp)->pv = ft_strdup(ms->one_cmd[i])))
+		if (!*tmp || !((*tmp)->pv = ft_strdup(ms->one_cmd[0])))
 		{
 			*start ? ft_lstdel(start, *ft_lstfree) : 0;
 			return (1);
 		}
+		(ms->one_cmd)++;
 	}
-	i += ft_lstsize(ms->env);
-	if (!(*arr = (char **)ft_memalloc(sizeof(char *) * i)))
-		return (1);
 	return (0);
 }
 
-int		setenv_set(t_minishell *ms)
+int		env_set(t_minishell *ms, t_list *env)
 {
 	int		i;
-	t_list	*tmp;
 	t_list	*start;
+	t_list	*tmp;
 	char	**arr;
 
 	i = 1;
-	tmp = NULL;
 	start = NULL;
-	if (setenv_mem_check(ms, &tmp, &start, &arr))
-		return (ms_error(1, "setenv: not enough memory\n"));
-	setenv_change(ms, start);
+	if (env_mem_check(ms, &tmp, &start))
+		return (ms_error(1, "env: not enough memory\n"));
+	env_change(ms, start);
 	tmp = ms->env;
 	i = 0;
 	while (tmp)
@@ -122,11 +102,14 @@ int		setenv_set(t_minishell *ms)
 	free(ms->arr_env);
 	ms->arr_env = arr;
 	return (0);
-}
+}*/
 
+
+// need ft_lstcpy
 int		ms_env(t_minishell *ms)
 {
 	t_list	*tmp;
+	t_list	*mem;
 
 	tmp = ms->env;
 	ms->ret = 0;
@@ -139,8 +122,18 @@ int		ms_env(t_minishell *ms)
 		}
 		return (1);
 	}
-	//if (ft_strcmp(
-	if (setenv_error_check(ms) || setenv_set(ms))
+	(ms->one_cmd)++;
+	mem = ms->env;
+	tmp = ms->env;
+	while (tmp->next)
+		tmp = tmp->next;
+	if (!(ft_strcmp(ms->one_cmd[0], "-i")))
+	{
+		tmp = 0;
+		ms->env = 0;
+		(ms->one_cmd)++;
+	}
+	if (env_set(ms, tmp))
 	{
 		ms->ret = -1;
 		return (1);

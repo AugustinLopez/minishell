@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 15:06:52 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 18:49:50 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,19 @@ int		run_cmd(t_minishell *ms, char *path)
 	pid_t	pid;
 	int		status;
 	t_stat	st;
+	t_list	*tmp;
 
+	ms_free(ms, 2);
 	signal(SIGINT, ms_signal_no_prompt);
+	if (!(ms->arr_env = (char **)ft_memalloc(sizeof(char *) * (1 + ft_lstsize(ms->env)))))
+		return (ms_error(-1, "minishell: not enough memory\n"));
+	status = 0;
+	tmp = ms->env;
+	while (tmp)
+	{
+		(ms->arr_env)[status++] = tmp->pv;
+		tmp = tmp->next;
+	}
 	if (stat(path, &st) < 0)
 	{
 		ft_dprintf(2, "minishell: invalid command: %s\n", path);

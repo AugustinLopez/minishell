@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:07:39 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 13:17:24 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 17:46:00 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ int	ms_echo(t_minishell *ms)
 	char	*tmp;
 
 	i = 1;
+	if (!ms->one_cmd[1])
+		return (1);
 	if (!ft_strcmp(ms->one_cmd[1], "-n"))
 		i = 2;
 	stop = (i == 2) ? 1 : 0;

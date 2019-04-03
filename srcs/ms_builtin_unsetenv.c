@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/01 13:48:46 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 13:05:18 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 16:11:22 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,5 @@ int	ms_unsetenv(t_minishell *ms)
 		}
 		i++;
 	}
-	//need to modify env_arr
 	return (1);
 }

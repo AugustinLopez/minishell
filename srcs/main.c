@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 10:57:54 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 19:00:11 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	ms_free(t_minishell *ms, int option)
 	if (!option)
 	{
 		ms->env ? ft_lstdel(&(ms->env), *ft_lstfree) : 0;
-		ms->arr_env ? ft_memdel((void**)&(ms->arr_env)) : 0;
 		ms->curr_path ? ft_memdel((void**)&(ms->curr_path)) : 0;
 		ft_gnl(-1, NULL, 0);
 	}
@@ -41,6 +40,7 @@ void	ms_free(t_minishell *ms, int option)
 	}
 	ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
 	ms->tmp1 ? ft_memdel((void**)&(ms->tmp1)) : 0;
+	ms->arr_env ? ft_memdel((void**)&(ms->arr_env)) : 0;
 	ms->elem = 0;
 }
 
