@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 13:35:27 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 15:06:52 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,19 @@ int		run_cmd(t_minishell *ms, char *path)
 	int		status;
 	t_stat	st;
 
+	signal(SIGINT, ms_signal_no_prompt);
 	if (stat(path, &st) < 0)
 	{
-		ft_printf("minishell: invalid command\n");
+		ft_dprintf(2, "minishell: invalid command: %s\n", path);
+		return (1);
+	}
+	if ((!(st.st_mode & S_IXUSR) || !(S_ISREG(st.st_mode))))
+	{
+		ft_dprintf(2, "minishell: permission denied: %s\n", path);
 		return (1);
 	}
 	status = 0;
 	pid = fork();
-	signal(SIGINT, ms_signal_no_prompt);
 	if (ms->flags & MSF_NO_MORE_CMD)
 		return (1);
 	if (!pid)

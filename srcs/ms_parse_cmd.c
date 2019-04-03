@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 14:19:51 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 14:57:24 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int	execute_single_command(t_minishell *ms)
 		return (i);
 	if ((i = is_bin_cmd(ms)))
 		return (i);
-	if (lstat((ms->one_cmd)[0], &stat) != -1)
+	if (lstat((ms->one_cmd)[0], &stat) != -1 && ft_strchr(ms->one_cmd[0], '/'))
 	{
 		if ((stat.st_mode & S_IXUSR))
 			return (run_cmd(ms, (ms->one_cmd)[0]));
