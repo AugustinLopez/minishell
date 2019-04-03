@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 14:19:52 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 13:35:27 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,13 @@ void	bonus_return(t_minishell *ms, int status)
 	else if (WIFSIGNALED(status))
 	{
 		ms->ret = 128 + WTERMSIG(status);
-		ft_dprintf(2, "minishell: core dumped: ");
-		while (ms->one_cmd[i])
-			ft_dprintf(2, " %s", ms->one_cmd[i++]);
-		ft_dprintf(2,"\n");
+		if (!(ms->flags & MSF_NO_MORE_CMD))
+		{
+			ft_dprintf(2, "minishell: core dumped: ");
+			while (ms->one_cmd[i])
+				ft_dprintf(2, " %s", ms->one_cmd[i++]);
+			ft_dprintf(2,"\n");
+		}
 	}
 }
 

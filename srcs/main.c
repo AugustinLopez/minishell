@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 11:25:09 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 10:57:54 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	ms_free(t_minishell *ms, int option)
 	{
 		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
 		ms->cmd ? ft_lstdel(&(ms->cmd), *ft_lstfree) : 0;
-		ms->elem ? ft_lstdel(&(ms->elem), *ft_lstfree) : 0;
 		ms->all_cmd ? ft_memdel((void**)&(ms->all_cmd)) : 0;
 	}
 	ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
@@ -52,12 +51,8 @@ int		main(int ac, char **av, char **env)
 	t_minishell	ms;
 
 	signal(SIGINT, ms_signal_no_prompt);
-	err = 0;
-	if ((err = ms_initialize(&ms, ac, av, env)))
-	{
-		ms_free(&ms, 0);
-		return (err);
-	}
+	i = 0;
+	err = ms_initialize(&ms, ac, av, env);
 	while (!err)
 	{
 		ms_free(&ms, 1);
@@ -74,7 +69,6 @@ int		main(int ac, char **av, char **env)
 			break ;
 	}
 	ms_free(&ms, 0);
-	if (i < 0)
-		return (i);
+	err = (i < 0) ? i : err;
 	return (err);
 }

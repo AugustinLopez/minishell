@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 14:54:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/02 13:43:48 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 13:35:00 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,22 @@ static inline int			remove_quote(char **src, char **new)
 	i = 0;
 	while ((*src)[j])
 	{
+		if ((*src)[j] == '\'' && (ret == 0 || ret == 1))
+		{
+			ret = (ret == 0) ? 1 : 0;
+			j++;
+			continue ;
+		}
+		if ((*src)[j] == '\"' && (ret == 0 || ret == 2))
+		{
+			ret = (ret == 0) ? 2 : 0;
+			j++;
+			continue ;
+		}
 		if (!ret && (*src)[j] == '\\')
 			j++;
-		else if (ft_strchr("\'\"",(*src)[j]))
-		{
-			ret = 1;
+		if (ret == 2 && (*src)[j] == '\\' && ft_strchr("\"\\", (*src)[j + 1]))
 			j++;
-			continue;
-		}
 		(*new)[i++] = (*src)[j++];
 	}
 	ret = (ret == 1) || ((*src)[0] == '\\') ? 1 : 0;
@@ -81,42 +89,6 @@ static inline int	ms_list_to_array(t_minishell *ms)
 	return (0);
 }
 
-/*static inline int	ms_handle_dollar(t_minishell *ms)
-{
-	int		i;
-	int		j;
-	int		k;
-	char	*s;
-
-	ms->elem = ms->cmd;
-	while (ms->elem)
-	{
-		if (ms->elem->pv && (((char *)(ms->elem->pv))[0]) && ms->elem->zu != '\'')
-		{
-			i = 0;
-			k = 0;
-			s = (char *)(ms->elem->pv);
-			while ((i = ft_strchri(s + k, '$')))
-			{
-				if (i != 1)
-				{
-					j = 2;
-					while (j < i && ((char *)(ms->elem->pv + i + k - j))[0] == '\\')
-						j++;
-				ft_printf("%d %d %d : %s\n", i, j, k, ms->elem->pv + i + k - j);
-					if (!((j + 1) % 2))
-						ft_printf("Hello\n");
-				}
-				else
-					ft_printf("Hello\n");
-				k += i + 1;
-			}
-		}
-		ms->elem = ms->elem->next;
-	}
-	return (0);
-}*/
-
 static inline int	ansi_value(char *str, char **result)
 {
 	char	*s;
@@ -160,6 +132,19 @@ static inline int	find_and_replace_dollar(t_minishell *ms)
 	i = 0;
 	while (str[i])
 	{
+		if (str[i] == '\\' && str[i + 1] != '$' && !(quote == '\\'))
+		{
+			i += 2;
+			continue ;
+		}
+		if (str[i] == '\\' && str[i + 1] == '$' && !(quote == '\''))
+		{
+			str[i] = 0;
+			s = ft_strjoin(str, str + i + 1);
+			free(ms->elem->pv);
+			ms->elem->pv = s;
+			continue ;
+		}
 		if (str[i] == '\'' && !(quote == '\''))
 			quote = (quote == 0) ? '\'' : 0;
 		if (str[i] == '\'' && !(quote == '\"'))
@@ -184,8 +169,15 @@ static inline int	find_and_replace_dollar(t_minishell *ms)
 		str[i + j] = c;
 		if (!tmp)
 		{
+			if (j == 1 && c == '?')
+				value = ft_itoa(ms->ret);
+			else
+				value = NULL;
 			str[i] = 0;
-			s = ft_strjoin(str, str + i + j);
+			if (value)
+				s = ft_sprintf("%s%s%s", str, value, str + i + j + 1);
+			else
+				s = ft_strjoin(str, str + i + j);
 			free(ms->elem->pv);
 			ms->elem->pv = s;
 		}

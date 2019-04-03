@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/01 11:09:36 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/03 10:58:30 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int		builtin_msname(t_minishell *ms)
 	{
 		if (ft_strlen((ms->one_cmd)[1]) > HOSTNAME_SIZE)
 		{
-			ft_dprintf(2, "Hostname cannot be longer than %i characters.\n", 
+			ft_dprintf(2, "Hostname cannot be longer than %i characters.\n",
 				HOSTNAME_SIZE);
 			ms->ret = 1;
 			return (1);
