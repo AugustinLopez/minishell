@@ -6,11 +6,20 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/03 16:42:47 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 17:15:53 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 17:22:40 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
+
+int					quote_value(char c, int quote)
+{
+	if (c == '\'' && !(quote == '\"'))
+		quote = (quote == 0) ? '\'' : 0;
+	else if (c == '\"' && !(quote == '\''))
+		quote = (quote == 0) ? '\"' : 0;
+	return (quote);
+}
 
 static inline int	remove_quote(char **src, char **tmp)
 {
@@ -23,10 +32,7 @@ static inline int	remove_quote(char **src, char **tmp)
 	i = 0;
 	while ((*src)[j])
 	{
-		if ((*src)[j] == '\'' && (quote == 0 || quote == '\''))
-			quote = (quote == 0) ? '\'' : 0;
-		else if ((*src)[j] == '\"' && (quote == 0 || quote == '\"'))
-			quote = (quote == 0) ? '\"' : 0;
+		quote = quote_value((*src)[j], quote);
 		if (ft_strchr("\"\'", (*src)[j]))
 		{
 			j++;

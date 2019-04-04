@@ -6,15 +6,11 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 16:09:59 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 18:34:36 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
-
-/*
-** currently av and ac are unused.
-*/
 
 inline static int	set_list(t_minishell *ms, t_list **elem, char *str)
 {
@@ -44,13 +40,13 @@ int					ms_initialize(t_minishell *ms, int ac, char **av,
 	ft_bzero(ms, sizeof(*ms));
 	g_ms = ms;
 	(ms->hostname)[0] = '$';
-	ms->ac = ac;
-	ms->av = av;
+	(void)ac;
+	(void)av;
 	tmp = NULL;
 	i = 0;
 	while (env[i])
 		if (!(set_list(ms, &tmp, env[i++])))
-			return (ms_error(1, "Fatal error: not enough memory to launch.\n"));
+			return (ms_error(1, "minishell: not enough memory to launch.\n"));
 	return (0);
 }
 
@@ -74,14 +70,14 @@ char				*get_from_env(t_minishell *ms, char *var)
 	return (NULL);
 }
 
-int		get_home_path(t_minishell *ms, char *path, char **return_path,
-						int reverse)
+int					get_home_path(t_minishell *ms, char *path,
+								char **return_path, int reverse)
 {
 	char	*home_path;
 
 	home_path = get_from_env(ms, "HOME=");
 	if (!home_path)
-		return (1);
+		return (0);
 	if (ft_strlcmp(path, reverse ? "~" : home_path))
 		*return_path = ft_strdup(path);
 	else if (reverse)
@@ -92,7 +88,5 @@ int		get_home_path(t_minishell *ms, char *path, char **return_path,
 		*return_path = ft_pathjoin("~", path + ft_strlen(home_path));
 	if (*return_path)
 		return (0);
-	else
-		ft_dprintf(2, "Error: not enough memory to get home path.\n");
-	return (1);
+	return (ms_error(-1, "minishell: not enough memory to load home path.\n"));
 }

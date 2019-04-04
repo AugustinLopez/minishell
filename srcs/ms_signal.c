@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 13:35:55 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 17:07:22 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void	ms_signal_no_prompt(int signo)
 	if (signo == SIGINT)
 	{
 		ft_putstr("\n");
-		if (!(g_ms->input)) //not sure if need this
-		show_prompt(g_ms);
+		if (!(g_ms->input))
+			show_prompt(g_ms);
 		g_ms->flags |= MSF_NO_MORE_CMD;
 	}
 }

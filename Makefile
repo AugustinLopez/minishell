@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/12 11:06:27 by aulopez           #+#    #+#              #
-#    Updated: 2019/04/03 16:48:57 by aulopez          ###   ########.fr        #
+#    Updated: 2019/04/04 18:37:08 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,13 +18,17 @@ SRC=main \
 	ms_prompt \
 	ms_read \
 	ms_split \
-	ms_split_to_list \
-	ms_split_remove_quote \
+		ms_split_to_list \
+		ms_split_remove_quote \
+		ms_split_replace \
+			ms_split_replace_dollar \
 	ms_builtin_exit \
 	ms_builtin_setenv \
+		ms_builtin_setenv_error \
 	ms_builtin_unsetenv \
 	ms_builtin_echo \
 	ms_builtin_cd \
+		ms_builtin_cd_posix \
 	ms_env_info \
 	ms_signal \
 	ms_run_cmd \

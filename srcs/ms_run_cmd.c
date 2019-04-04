@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 18:49:50 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 17:25:54 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,36 +39,46 @@ int		run_cmd(t_minishell *ms, char *path)
 	int		status;
 	t_stat	st;
 	t_list	*tmp;
+	char	**arr;
 
 	ms_free(ms, 2);
 	signal(SIGINT, ms_signal_no_prompt);
-	if (!(ms->arr_env = (char **)ft_memalloc(sizeof(char *) * (1 + ft_lstsize(ms->env)))))
+	if (!(arr = (char **)ft_memalloc(sizeof(char *) * (1 + ft_lstsize(ms->env)))))
 		return (ms_error(-1, "minishell: not enough memory\n"));
 	status = 0;
 	tmp = ms->env;
 	while (tmp)
 	{
-		(ms->arr_env)[status++] = tmp->pv;
+		(arr)[status++] = tmp->pv;
 		tmp = tmp->next;
 	}
 	if (stat(path, &st) < 0)
 	{
+		free(arr);
 		ft_dprintf(2, "minishell: invalid command: %s\n", path);
 		return (1);
 	}
 	if ((!(st.st_mode & S_IXUSR) || !(S_ISREG(st.st_mode))))
 	{
+		free(arr);
 		ft_dprintf(2, "minishell: permission denied: %s\n", path);
 		return (1);
 	}
 	status = 0;
 	pid = fork();
 	if (ms->flags & MSF_NO_MORE_CMD)
+	{
+		free(arr);
 		return (1);
+	}
 	if (!pid)
-		execve(path, ms->one_cmd, ms->arr_env);
+		execve(path, ms->one_cmd, arr);
 	else if (pid < 0)
+	{
+		free(arr);
 		return (ms_error(-1, "minishell: failed to fork the process.\n"));
+	}
+	free(arr);
 	waitpid(pid, &status, 0);
 	bonus_return(ms, status);
 	return (1);

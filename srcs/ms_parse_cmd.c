@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 16:05:51 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 19:11:27 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,18 @@
 
 static int	is_builtin_cmd(t_minishell *ms)
 {
+	int	ret;
+
 	if (!ft_strcmp((ms->one_cmd)[0], "exit"))
 		ms_exit(ms);
 	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
 		return (ms_echo(ms));
 	if (!ft_strcmp((ms->one_cmd)[0], "cd"))
-		return (ms_cd(ms));
+	{
+		ret = ms_cd(ms);
+		load_prompt(ms);
+		return (ret);
+	}
 	if (!ft_strcmp((ms->one_cmd)[0], "setenv"))
 		return (ms_setenv(ms));
 	if (!ft_strcmp(ms->one_cmd[0], "unsetenv"))
@@ -46,7 +52,6 @@ static int	execute_single_command(t_minishell *ms)
 	{
 		if ((stat.st_mode & S_IXUSR))
 			return (run_cmd(ms, (ms->one_cmd)[0]));
-		// in run_cmd
 		ft_dprintf(2, "minishell: permission denied: %s\n", (ms->one_cmd)[0]);
 		ms->ret = 126;
 		return (0);
@@ -63,13 +68,13 @@ int			execute_command_among_other(t_minishell *ms, size_t i, size_t *j)
 {
 	int		ret;
 
-	(ms->all_cmd)[i] = NULL;
+	(ms->arr_cmd)[i] = NULL;
 	if (*j == i)
 		ret = 0;
 	else
 		ret = execute_single_command(ms);
-	(ms->all_cmd)[i] = ms->elem->pv;
-	ms->one_cmd = (ms->all_cmd) + (i + 1);
+	(ms->arr_cmd)[i] = ms->elem->pv;
+	ms->one_cmd = (ms->arr_cmd) + (i + 1);
 	*j = i + 1;
 	return (ret);
 }
@@ -84,11 +89,11 @@ int			ms_execute(t_minishell *ms)
 	ret = 0;
 	i = 0;
 	j = 0;
-	ms->one_cmd = ms->all_cmd;
+	ms->one_cmd = ms->arr_cmd;
 	ms->elem = ms->cmd;
 	while (ms->elem)
 	{
-		if (ms->elem->zu == ';')
+		if (m && ms->arr_cmd[j])
 			if ((ret = execute_command_among_other(ms, i, &j)) < 0)
 				break ;
 		i++;
@@ -96,6 +101,6 @@ int			ms_execute(t_minishell *ms)
 	}
 	if (ret < 0)
 		return (ret);
-	ret = (j < i) ? execute_single_command(ms) : ret;
+	ret = (j < i && ms->arr_cmd[j]) ? execute_single_command(ms) : ret;
 	return (ret);
 }

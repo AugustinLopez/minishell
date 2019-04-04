@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 17:15:16 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 18:36:18 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,7 @@
 
 typedef struct		s_minishell
 {
-	int				ac;
-	char			**av;
 	t_list			*env;
-	char			**arr_env;
 	int				flags;
 	int				ret;
 	char			hostname[HOSTNAME_SIZE + 1];
@@ -57,7 +54,7 @@ typedef struct		s_minishell
 	char			*historique[HISTO_SIZE];
 	char			*input;
 	t_list			*cmd;
-	char			**all_cmd;
+	char			**arr_cmd;
 	char			**one_cmd;
 	char			*tmp0;
 	char			*tmp1;
@@ -79,18 +76,31 @@ int		ms_error(int ret, char *s);
 void	ms_free(t_minishell *ms, int option);
 void	ms_exit(t_minishell *ms);
 int		ms_setenv(t_minishell *ms);
+int		setenv_error_check(t_minishell *ms);
+int		setenv_mem_check(t_minishell *ms, t_list **tmp, t_list **start);
 int		ms_unsetenv(t_minishell *ms);
 int		ms_echo(t_minishell *ms);
+
 int		ms_cd(t_minishell *ms);
+int		cd_posix_minus(t_minishell *ms, int ac, int flags);
+int		cd_posix_step_1_2(t_minishell *ms, int ac, char *home_path, int flags);
+char	*cd_posix_step_3_to_6(t_minishell *ms, int ac, int *flags);
+int		cd_posix_parsing(t_minishell *ms, int *flags);
+int		change_dir(t_minishell *ms, char *path, int flags);
+
 void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
+
 int		ms_split(t_minishell *ms);
 int		ms_split_to_list(t_minishell *ms);
 int		ms_split_remove_quote(t_minishell *ms);
+int		ms_split_replace(t_minishell *ms);
+int		ms_split_replace_dollar(t_minishell *ms);
+int		ms_split_protect_characters(char *str, char **result);
+
 int		ms_read(t_minishell *ms);
-
+int		quote_value(char c, int quote);
 int		need_new_prompt(void);
-
 
 int		run_cmd(t_minishell *ms, char *path);
 int		is_bin_cmd(t_minishell *ms);

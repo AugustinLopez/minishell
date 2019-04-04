@@ -6,17 +6,11 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 19:00:11 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 17:23:34 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
-
-int		ms_error(int ret, char *s)
-{
-	ft_dprintf(2, "%s", s);
-	return (ret);
-}
 
 /*
 ** option == 0 : free everything
@@ -36,12 +30,17 @@ void	ms_free(t_minishell *ms, int option)
 	{
 		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
 		ms->cmd ? ft_lstdel(&(ms->cmd), *ft_lstfree) : 0;
-		ms->all_cmd ? ft_memdel((void**)&(ms->all_cmd)) : 0;
+		ms->arr_cmd ? ft_memdel((void**)&(ms->arr_cmd)) : 0;
+		ms->flags &= ~MSF_NO_MORE_CMD;
 	}
 	ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
 	ms->tmp1 ? ft_memdel((void**)&(ms->tmp1)) : 0;
-	ms->arr_env ? ft_memdel((void**)&(ms->arr_env)) : 0;
-	ms->elem = 0;
+}
+
+int		ms_error(int ret, char *s)
+{
+	ft_dprintf(2, "%s", s);
+	return (ret);
 }
 
 int		main(int ac, char **av, char **env)
@@ -56,7 +55,6 @@ int		main(int ac, char **av, char **env)
 	while (!err)
 	{
 		ms_free(&ms, 1);
-		ms.flags &= ~MSF_NO_MORE_CMD;
 		if ((err = ms_read(&ms)))
 			break ;
 		if ((err = ms_split(&ms)))

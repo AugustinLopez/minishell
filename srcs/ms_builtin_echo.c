@@ -6,13 +6,13 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:07:39 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 17:46:00 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 18:20:43 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-char	parse_octal(char *src, size_t *index)
+static inline char	parse_octal(char *src, size_t *index)
 {
 	size_t	i;
 	int		ret;
@@ -36,7 +36,7 @@ char	parse_octal(char *src, size_t *index)
 	return (ret);
 }
 
-char	parse_hexa(char *src, size_t *index)
+static inline char	parse_hexa(char *src, size_t *index)
 {
 	size_t	i;
 	int		ret;
@@ -58,7 +58,7 @@ char	parse_hexa(char *src, size_t *index)
 	return (ret);
 }
 
-char	parse_escape(char *src, size_t	*i)
+static inline char	parse_escape(char *src, size_t *i)
 {
 	(*i)++;
 	if (!ft_strchr("abfntv\\0x", src[1]) || !src[1])
@@ -84,7 +84,7 @@ char	parse_escape(char *src, size_t	*i)
 		return (parse_hexa(src + 1, i));
 }
 
-char	*parse_echo(char *src, int *stop)
+static inline char	*parse_echo(char *src, int *stop)
 {
 	size_t	i;
 	size_t	j;
@@ -109,17 +109,15 @@ char	*parse_echo(char *src, int *stop)
 	return (str);
 }
 
-int	ms_echo(t_minishell *ms)
+int					ms_echo(t_minishell *ms)
 {
 	size_t	i;
 	int		stop;
 	char	*tmp;
 
-	i = 1;
 	if (!ms->one_cmd[1])
 		return (1);
-	if (!ft_strcmp(ms->one_cmd[1], "-n"))
-		i = 2;
+	i = !ft_strcmp(ms->one_cmd[1], "-n") ? 2 : 1;
 	stop = (i == 2) ? 1 : 0;
 	while ((ms->one_cmd)[i])
 	{

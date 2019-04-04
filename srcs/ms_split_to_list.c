@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/02 11:15:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/03 17:22:46 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/04 17:13:23 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static inline int	case_semicolon(t_minishell *ms, size_t *j, size_t *i)
 		ms->elem = ms->elem->next;
 	}
 	ms->elem->pv = ft_strdup(";");
-	ms->elem->zu = 1;
+	ms->elem->zu = ';';
 	ms->elem->next = ft_lstnew(0, 0);
 	if (!(ms->elem->next) || !((ms->elem->pv)))
 		return (-1);
@@ -51,23 +51,23 @@ static inline int	case_whitespace(t_minishell *ms, size_t *j, size_t *i)
 		(ms->tmp0)[*j] = 0;
 		ms->elem->pv = ft_strdup(ms->tmp0);
 		ms->elem->next = ft_lstnew(0, 0);
-		if (!(ms->elem->pv)  || !(ms->elem->next))
+		if (!(ms->elem->pv) || !(ms->elem->next))
 			return (-1);
-		ms->elem->zu = *j;
+		ms->elem->zu = 1;
 		ms->elem = ms->elem->next;
 		*j = 0;
 		(ms->tmp0)[*i] = ' ';
 	}
 	while (ft_strchri(" \t", (ms->input)[*i]))
 		(*i)++;
-	return  (1);
+	return (1);
 }
 
 static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j,
 									int *option)
 {
 	int	special_case;
-	
+
 	special_case = 0;
 	*option = case_quote(ms, *option, *i);
 	if (!*option)
@@ -89,7 +89,7 @@ static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j,
 	return (special_case);
 }
 
-int			ms_split_to_list(t_minishell *ms)
+int					ms_split_to_list(t_minishell *ms)
 {
 	int		option;
 	int		special_case;
