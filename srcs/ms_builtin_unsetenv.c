@@ -20,6 +20,11 @@ static inline int	special_case(t_minishell *ms)
 	ms->ret = 1;
 	if (!(ms->one_cmd[i]))
 		return (1);
+	if (!ft_strcmp(ms->one_cmd[i], "*"))
+	{
+		ft_lstdel(&ms->env, *ft_lstfree);
+		return (1);
+	}
 	while (ms->one_cmd[i])
 	{
 		if (!(ms->one_cmd[i][0]))

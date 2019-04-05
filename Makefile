@@ -29,6 +29,7 @@ SRC=main \
 	ms_builtin_echo \
 	ms_builtin_cd \
 		ms_builtin_cd_posix \
+	ms_builtin_env \
 	ms_env_info \
 	ms_signal \
 	ms_run_cmd \

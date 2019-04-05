@@ -118,7 +118,7 @@ char	*ft_sprintf(const char *format, ...)
 			pf_buffer_write(&pf, pf.format, 1);
 		++pf.format;
 	}
-	if (pf.pc)
+	if (pf.pc && (((pf.buff)[pf.index] = 0) == 0))
 		pf_char_write(&pf);
 	va_end(pf.ap);
 	return (pf.pc);

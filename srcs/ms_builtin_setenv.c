@@ -15,7 +15,12 @@
 void	setenv_proceed(t_minishell *ms, t_list **start, t_list **tmp,
 						t_list **tmpenv)
 {
-	if (*tmpenv)
+	if (!ms->env)
+	{
+		ms->env = *start;
+		*tmp = (*tmp)->next;
+	}
+	else if (*tmpenv)
 	{
 		free((*tmpenv)->pv);
 		(*tmpenv)->pv = (*tmp)->pv;
@@ -62,11 +67,9 @@ int		setenv_change(t_minishell *ms, t_list *start)
 
 int		setenv_set(t_minishell *ms)
 {
-	int		i;
 	t_list	*tmp;
 	t_list	*start;
 
-	i = 1;
 	tmp = NULL;
 	start = NULL;
 	if (setenv_mem_check(ms, &tmp, &start))

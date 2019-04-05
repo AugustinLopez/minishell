@@ -34,10 +34,12 @@ static int	is_builtin_cmd(t_minishell *ms)
 		return (builtin_msname(ms));
 	if (!ft_strcmp((ms->one_cmd)[0], "mspath"))
 		return (builtin_mspath(ms));
+	if (!ft_strcmp((ms->one_cmd)[0], "env"))
+		return (ms_env(ms));
 	return (0);
 }
 
-static int	execute_single_command(t_minishell *ms)
+int				execute_single_command(t_minishell *ms)
 {
 	t_stat	stat;
 	int		i;
@@ -93,7 +95,7 @@ int			ms_execute(t_minishell *ms)
 	ms->elem = ms->cmd;
 	while (ms->elem)
 	{
-		if (m && ms->arr_cmd[j])
+		if (ms->elem->zu == ';')
 			if ((ret = execute_command_among_other(ms, i, &j)) < 0)
 				break ;
 		i++;

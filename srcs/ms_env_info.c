@@ -76,6 +76,7 @@ int					get_home_path(t_minishell *ms, char *path,
 	char	*home_path;
 
 	home_path = get_from_env(ms, "HOME=");
+	return_path ? ft_memdel((void **)return_path) : 0;
 	if (!home_path)
 		return (0);
 	if (ft_strlcmp(path, reverse ? "~" : home_path))

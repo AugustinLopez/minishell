@@ -103,6 +103,7 @@ static inline int		replacement(t_minishell *ms, size_t i, size_t j,
 	str[i] = 0;
 	if (!ms_split_protect_characters(safe, &val))
 		return (1);
+	//ft_printf("1.%s\n", val);
 	if (quote == '\"')
 		tmp = ft_sprintf("%s\"%s\"%s", str, val, str + i + j);
 	else

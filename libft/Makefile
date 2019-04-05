@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 13:11:21 by aulopez           #+#    #+#              #
-#    Updated: 2019/04/01 12:28:13 by aulopez          ###   ########.fr        #
+#    Updated: 2019/03/22 09:49:07 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ _LIST=	lstnew \
 		lstdel \
 		lstadd \
 		lstmap \
+		lstccpy \
 		lstiter \
 		lstinsert \
 		lstappend \

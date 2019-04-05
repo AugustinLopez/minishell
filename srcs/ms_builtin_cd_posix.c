@@ -63,7 +63,7 @@ char				*cd_posix_step_3_to_6(t_minishell *ms, int ac, int *flags)
 	{
 		tmp = (split[i][0]) ? ft_sprintf("%s/%s", split[i], (ms->one_cmd)[ac])
 			: ft_sprintf("./%s", (ms->one_cmd)[ac]);
-		if ((!tmp) || stat(tmp, &st) >= 0 || S_ISDIR(st.st_mode))
+		if ((!tmp || stat(tmp, &st) >= 0))
 		{
 			ft_free_sarray(&split);
 			*flags += (tmp != NULL) ? 512 : 0;
@@ -72,6 +72,7 @@ char				*cd_posix_step_3_to_6(t_minishell *ms, int ac, int *flags)
 		free(tmp);
 		i++;
 	}
+	ft_free_sarray(&split);
 	return (ft_strdup(ms->one_cmd[ac]));
 }
 

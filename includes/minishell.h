@@ -78,6 +78,7 @@ void	ms_exit(t_minishell *ms);
 int		ms_setenv(t_minishell *ms);
 int		setenv_error_check(t_minishell *ms);
 int		setenv_mem_check(t_minishell *ms, t_list **tmp, t_list **start);
+int		print_env(t_minishell *ms);
 int		ms_unsetenv(t_minishell *ms);
 int		ms_echo(t_minishell *ms);
 
@@ -87,10 +88,10 @@ int		cd_posix_step_1_2(t_minishell *ms, int ac, char *home_path, int flags);
 char	*cd_posix_step_3_to_6(t_minishell *ms, int ac, int *flags);
 int		cd_posix_parsing(t_minishell *ms, int *flags);
 int		change_dir(t_minishell *ms, char *path, int flags);
-
+int		execute_single_command(t_minishell *ms);
 void	ms_signal_reinitialize(int signo);
 void	ms_signal_no_prompt(int signo);
-
+int		ms_env(t_minishell *ms);
 int		ms_split(t_minishell *ms);
 int		ms_split_to_list(t_minishell *ms);
 int		ms_split_remove_quote(t_minishell *ms);
