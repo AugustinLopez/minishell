@@ -81,6 +81,8 @@ int						change_dir(t_minishell *ms, char *path, int flags)
 		return (ms_error(-1, "minishell: not enough memory to use cd\n"));
 	if (!chdir(path))
 	{
+		if (!(cwd = getcwd(buff, PATH_MAX)))
+			return (ms_error(1, "cd: could not get path to current directory.\n"));
 		if (flags & 512)
 			ft_printf("%s\n", cwd);
 		if (!(list->next = cd_set("PWD=", cwd)))
