@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 18:31:25 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 18:36:31 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:20:18 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int					cd_posix_step_1_2(t_minishell *ms, int ac, char *home_path,
 		return (1);
 	}
 	if (ms->one_cmd[ac + 1])
-		return (ms_error(1, "cd: too many arguments\n"));
+		return (ms_error(ms, 1, "cd: too many arguments\n"));
 	return (0);
 }
 
@@ -53,12 +53,11 @@ char				*cd_posix_step_3_to_6(t_minishell *ms, int ac, int *flags)
 	size_t	i;
 	t_stat	st;
 
-	if ((ms->one_cmd)[ac][0] == '/' || (ms->one_cmd)[ac][0] == '.')
+	if ((i = 0) || (ms->one_cmd)[ac][0] == '/' || (ms->one_cmd)[ac][0] == '.')
 		return (ft_strdup(ms->one_cmd[ac]));
 	tmp = get_from_env(ms, "CDPATH=");
 	if (!tmp || !(split = ft_strsplit(tmp, ':')))
 		return (ft_strdup(ms->one_cmd[ac]));
-	i = 0;
 	while (split[i])
 	{
 		tmp = (split[i][0]) ? ft_sprintf("%s/%s", split[i], (ms->one_cmd)[ac])
@@ -98,6 +97,7 @@ int					cd_posix_parsing(t_minishell *ms, int *flags)
 	if (!av || !(av[0]))
 	{
 		ft_dprintf(2, "cd: invalid argument: %s\n", ms->one_cmd[0]);
+		ms->ret = 1;
 		return (-1);
 	}
 	i = 1;
@@ -108,6 +108,7 @@ int					cd_posix_parsing(t_minishell *ms, int *flags)
 		if (!cd_available_option(av[i], flags))
 		{
 			ft_dprintf(2, "cd: invalid argument: %s\n", ms->one_cmd[i]);
+			ms->ret = 1;
 			return (-1);
 		}
 		i++;

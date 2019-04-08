@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:32:06 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 18:36:44 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:20:24 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,15 @@ static inline void		cd_setenv(t_minishell *ms, t_list *list)
 		ft_lstadd(&(ms->env), list);
 }
 
-static inline void		could_not_change_dir(t_list **list, char *path)
+static inline void		could_not_change_dir(t_minishell *ms,
+												t_list **list, char *path)
 {
 	ft_putstr_fd("cd: ", 2);
-	if (access(path, F_OK) == -1)
+	if (access(path, F_OK) == -1 && (ms->ret = 1))
 		ft_putstr_fd("no such file or directory: ", 2);
-	else if (access(path, R_OK) == -1)
+	else if (access(path, R_OK) == -1 && (ms->ret = 126))
 		ft_putstr_fd("permission denied: ", 2);
-	else
+	else if ((ms->ret = 1))
 		ft_putstr_fd("not a directory: ", 2);
 	ft_putendl_fd(path, 2);
 	ft_lstdel(list, *ft_lstfree);
@@ -76,25 +77,25 @@ int						change_dir(t_minishell *ms, char *path, int flags)
 	t_list	*list;
 
 	if (!(cwd = getcwd(buff, PATH_MAX)))
-		return (ms_error(1, "cd: could not get path to current directory.\n"));
+		return (ms_error(ms, 1, "cd: bad path to current directory.\n"));
 	if (!(list = cd_set("OLDPWD=", cwd)))
-		return (ms_error(-1, "minishell: not enough memory to use cd\n"));
+		return (ms_error(ms, -1, "msh: not enough memory to use cd\n"));
 	if (!chdir(path))
 	{
 		if (!(cwd = getcwd(buff, PATH_MAX)))
-			return (ms_error(1, "cd: could not get path to current directory.\n"));
+			return (ms_error(ms, 1, "cd: bad path to current directory.\n"));
 		if (flags & 512)
 			ft_printf("%s\n", cwd);
 		if (!(list->next = cd_set("PWD=", cwd)))
-			return (ms_error(-1, "minishell: not enough memory to use cd\n"));
-		if (ms->flags & MSF_SHOW_PATH_HOME)
-			if (get_home_path(ms, cwd, &(ms->curr_path), 0))
+			return (ms_error(ms, -1, "msh: not enough memory to use cd\n"));
+		if (ms->flags & MSF_SHOW_PATH_HOME && !(ms->flags & MSF_ENV_CMD))
+			if (get_home_path(ms, cwd, &(ms->cwd), 0))
 				return (-1);
 		cd_setenv(ms, list->next);
 		cd_setenv(ms, list);
 	}
 	else
-		could_not_change_dir(&list, path);
+		could_not_change_dir(ms, &list, path);
 	return (1);
 }
 
@@ -121,6 +122,6 @@ int						ms_cd(t_minishell *ms)
 		return (ret);
 	}
 	else
-		return (ms_error(-1, "minishell: not enough memory to use cd\n"));
+		return (ms_error(ms, -1, "msh: not enough memory to use cd\n"));
 	return (1);
 }

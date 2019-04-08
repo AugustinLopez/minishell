@@ -6,52 +6,58 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 17:23:34 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:12:38 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-/*
-** option == 0 : free everything
-** option == 1 : free current command cycle
-** option == 2 : free temp variable
-*/
-
-void	ms_free(t_minishell *ms, int option)
+inline static int	set_list(t_minishell *ms, t_list **elem, char *str)
 {
-	if (!option)
+	if (!(*elem))
 	{
-		ms->env ? ft_lstdel(&(ms->env), *ft_lstfree) : 0;
-		ms->curr_path ? ft_memdel((void**)&(ms->curr_path)) : 0;
-		ft_gnl(-1, NULL, 0);
+		if (!(*elem = ft_lstnew(0, 0)))
+			return (-1);
+		ms->env = *elem;
 	}
-	if (option <= 1)
+	else
 	{
-		ms->input ? ft_memdel((void**)&(ms->input)) : 0;
-		ms->cmd ? ft_lstdel(&(ms->cmd), *ft_lstfree) : 0;
-		ms->arr_cmd ? ft_memdel((void**)&(ms->arr_cmd)) : 0;
-		ms->flags &= ~MSF_NO_MORE_CMD;
+		if (!((*elem)->next = ft_lstnew(0, 0)))
+			return (-1);
+		*elem = (*elem)->next;
 	}
-	ms->tmp0 ? ft_memdel((void**)&(ms->tmp0)) : 0;
-	ms->tmp1 ? ft_memdel((void**)&(ms->tmp1)) : 0;
+	if (!((*elem)->pv = ft_strdup(str)))
+		return (-1);
+	return (0);
 }
 
-int		ms_error(int ret, char *s)
+inline static int	ms_init(t_minishell *ms, int ac, char **av, char **env)
 {
-	ft_dprintf(2, "%s", s);
-	return (ret);
+	size_t	i;
+	t_list	*tmp;
+
+	ft_bzero(ms, sizeof(*ms));
+	g_ms = ms;
+	(ms->hostname)[0] = '$';
+	(void)ac;
+	(void)av;
+	tmp = NULL;
+	i = 0;
+	while (env[i])
+		if (set_list(ms, &tmp, env[i++]))
+			return (ms_error(ms, -1, "msh: not enough memory to launch.\n"));
+	return (0);
 }
 
-int		main(int ac, char **av, char **env)
+int					main(int ac, char **av, char **env)
 {
 	int			err;
 	int			i;
 	t_minishell	ms;
 
-	signal(SIGINT, ms_signal_no_prompt);
+	signal(SIGINT, ms_signal_when_executing);
 	i = 0;
-	err = ms_initialize(&ms, ac, av, env);
+	err = ms_init(&ms, ac, av, env);
 	while (!err)
 	{
 		ms_free(&ms, 1);

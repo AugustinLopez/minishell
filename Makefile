@@ -6,7 +6,7 @@
 #    By: aulopez <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/12 11:06:27 by aulopez           #+#    #+#              #
-#    Updated: 2019/04/04 18:37:08 by aulopez          ###   ########.fr        #
+#    Updated: 2019/04/08 17:27:36 by aulopez          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ NAME=minishell
 # --- 1.Source/Header ----------------------------------------------------------
 
 SRC=main \
+	ms_utilities \
 	ms_prompt \
 	ms_read \
 	ms_split \
@@ -30,11 +31,10 @@ SRC=main \
 	ms_builtin_cd \
 		ms_builtin_cd_posix \
 	ms_builtin_env \
-	ms_env_info \
-	ms_signal \
-	ms_run_cmd \
 	ms_builtin_bonus \
-	ms_parse_cmd
+	ms_signal \
+	ms_execute \
+		ms_execute_type
 HDR=libft.h \
 	minishell.h
 

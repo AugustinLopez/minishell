@@ -6,20 +6,11 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/02 11:15:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 17:13:23 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 15:19:08 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
-
-static inline int	case_quote(t_minishell *ms, int option, size_t i)
-{
-	if ((!option || option == 1) && (ms->input)[i] == '\"')
-		option = (!option) ? 1 : 0;
-	else if ((!option || option == 2) && (ms->input)[i] == '\'')
-		option = (!option) ? 2 : 0;
-	return (option);
-}
 
 static inline int	case_semicolon(t_minishell *ms, size_t *j, size_t *i)
 {
@@ -69,18 +60,18 @@ static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j,
 	int	special_case;
 
 	special_case = 0;
-	*option = case_quote(ms, *option, *i);
+	*option = quote_value((ms->input)[*i], *option);
 	if (!*option)
 	{
 		if ((ms->input)[*i] == ';')
 			special_case = case_semicolon(ms, j, i);
+		else if (ft_strchr(" \t", (ms->input)[*i]))
+			special_case = case_whitespace(ms, j, i);
 		else if ((ms->input)[*i] == '\\')
 		{
 			(ms->tmp0)[(*j)++] = (ms->input)[(*i)++];
 			special_case = !(ms->input)[(*i)] ? 1 : 0;
 		}
-		else if (ft_strchri(" \t", (ms->input)[*i]))
-			special_case = case_whitespace(ms, j, i);
 		if (special_case == -1)
 			return (-1);
 	}

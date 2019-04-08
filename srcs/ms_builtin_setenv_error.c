@@ -6,28 +6,27 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 18:04:36 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 18:17:46 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:30:57 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-int		setenv_error_loop(char *s)
+static inline int	setenv_error_loop(t_minishell *ms, char *s)
 {
 	while (*s != '=')
 	{
 		if (!ft_isalnum(*s) && !(*s == '_'))
 		{
 			ft_dprintf(2, "setenv: all characters in name must be ");
-			ft_dprintf(2, " a number, a letter or an underscore\n");
-			return (1);
+			return (ms_error(ms, 1, " a number, a letter or an underscore\n"));
 		}
 		s++;
 	}
 	return (0);
 }
 
-int		setenv_error_check(t_minishell *ms)
+int					setenv_error_check(t_minishell *ms)
 {
 	int		i;
 	char	*s;
@@ -36,23 +35,21 @@ int		setenv_error_check(t_minishell *ms)
 	while (ms->one_cmd[i])
 	{
 		if (!(s = ft_strchr(ms->one_cmd[i], '=')) || ft_strchr(s + 1, '='))
-		{
-			ft_dprintf(2, "setenv: argument format is not \'name=value\'\n");
-			return (1);
-		}
+			return (ms_error(ms, 1, "setenv: format is \'name=value\'\n"));
 		if (!(s[1]) || (ms->one_cmd[i][0] == '='))
-			return (ms_error(1, "setenv: name/value cannot be set as NUL\n"));
+			return (ms_error(ms, 1, "setenv: name/value cannot be NUL\n"));
 		if (ft_isdigit(ms->one_cmd[i][0]))
-			return (ms_error(1, "setenv: name cannot start with a number\n"));
+			return (ms_error(ms, 1, "setenv: name cannot start with [0-9]\n"));
 		s = ms->one_cmd[i];
-		if (setenv_error_loop(s))
+		if (setenv_error_loop(ms, s))
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int		setenv_mem_check(t_minishell *ms, t_list **tmp, t_list **start)
+int					setenv_mem_check(t_minishell *ms, t_list **tmp,
+										t_list **start)
 {
 	int	i;
 

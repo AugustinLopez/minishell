@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/01 13:48:46 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 18:03:18 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:31:53 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,15 @@ static inline int	special_case(t_minishell *ms)
 	if (!ft_strcmp(ms->one_cmd[i], "*"))
 	{
 		ft_lstdel(&ms->env, *ft_lstfree);
+		load_prompt(ms);
 		return (1);
 	}
 	while (ms->one_cmd[i])
 	{
 		if (!(ms->one_cmd[i][0]))
-			return (ms_error(1, "unsetenv: argument cannot be NUL\n"));
+			return (ms_error(ms, 1, "unsetenv: argument cannot be NUL\n"));
 		if (ft_strchr(ms->one_cmd[i], '='))
-			return (ms_error(1, "unsetenv: argument cannot contains '='\n"));
+			return (ms_error(ms, 1, "unsetenv: argument cannot use '='\n"));
 		i++;
 	}
 	ms->ret = 0;

@@ -1,45 +1,73 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_parse_cmd.c                                     :+:      :+:    :+:   */
+/*   ms_execute.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 19:11:27 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:30:18 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-static int	is_builtin_cmd(t_minishell *ms)
+static inline int	test_error_pre_fork(t_minishell *ms, char *path, char **arr)
 {
-	int	ret;
+	size_t	i;
+	t_stat	st;
+	t_list	*tmp;
 
-	if (!ft_strcmp((ms->one_cmd)[0], "exit"))
-		ms_exit(ms);
-	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
-		return (ms_echo(ms));
-	if (!ft_strcmp((ms->one_cmd)[0], "cd"))
+	i = 0;
+	tmp = ms->env;
+	while (tmp)
 	{
-		ret = ms_cd(ms);
-		load_prompt(ms);
-		return (ret);
+		(arr)[i++] = tmp->pv;
+		tmp = tmp->next;
 	}
-	if (!ft_strcmp((ms->one_cmd)[0], "setenv"))
-		return (ms_setenv(ms));
-	if (!ft_strcmp(ms->one_cmd[0], "unsetenv"))
-		return (ms_unsetenv(ms));
-	if (!ft_strcmp((ms->one_cmd)[0], "msname"))
-		return (builtin_msname(ms));
-	if (!ft_strcmp((ms->one_cmd)[0], "mspath"))
-		return (builtin_mspath(ms));
-	if (!ft_strcmp((ms->one_cmd)[0], "env"))
-		return (ms_env(ms));
-	return (0);
+	i = 1;
+	ms->ret = 0;
+	if (stat(path, &st) < 0 && (ms->ret = 126))
+		ft_dprintf(2, "minishell: invalid command: %s\n", path);
+	else if ((!(st.st_mode & S_IXUSR) || !(S_ISREG(st.st_mode)))
+		&& (ms->ret = 127))
+		ft_dprintf(2, "minishell: permission denied: %s\n", path);
+	else if (!(ms->flags & MSF_NO_MORE_CMD))
+		i = 0;
+	if (i == 1)
+		free(arr);
+	return (i);
 }
 
-int				execute_single_command(t_minishell *ms)
+int					run_cmd(t_minishell *ms, char *path)
+{
+	pid_t	pid;
+	int		status;
+	char	**arr;
+
+	ms_free(ms, 2);
+	signal(SIGINT, ms_signal_when_executing);
+	arr = (char **)ft_memalloc(sizeof(char *) * (1 + ft_lstsize(ms->env)));
+	if (!arr)
+		return (ms_error(ms, -1, "msh: not enough memory\n"));
+	if (test_error_pre_fork(ms, path, arr))
+		return (1);
+	status = 0;
+	pid = fork();
+	if (!pid)
+		execve(path, ms->one_cmd, arr);
+	else if (pid < 0)
+	{
+		free(arr);
+		return (ms_error(ms, -1, "msh: failed to fork the process.\n"));
+	}
+	free(arr);
+	waitpid(pid, &status, 0);
+	ret_value(ms, status);
+	return (1);
+}
+
+int					execute_single_command(t_minishell *ms)
 {
 	t_stat	stat;
 	int		i;
@@ -54,19 +82,19 @@ int				execute_single_command(t_minishell *ms)
 	{
 		if ((stat.st_mode & S_IXUSR))
 			return (run_cmd(ms, (ms->one_cmd)[0]));
-		ft_dprintf(2, "minishell: permission denied: %s\n", (ms->one_cmd)[0]);
+		ft_dprintf(2, "msh: permission denied: %s\n", (ms->one_cmd)[0]);
 		ms->ret = 126;
-		return (0);
 	}
-	if (*(ms->one_cmd) && **(ms->one_cmd))
+	else if (*(ms->one_cmd) && **(ms->one_cmd))
 	{
-		ft_dprintf(2, "minishell: command not found: %s\n", (ms->one_cmd)[0]);
+		ft_dprintf(2, "msh: command not found: %s\n", (ms->one_cmd)[0]);
 		ms->ret = 127;
 	}
 	return (0);
 }
 
-int			execute_command_among_other(t_minishell *ms, size_t i, size_t *j)
+static inline int	execute_command_among_other(t_minishell *ms, size_t i,
+												size_t *j)
 {
 	int		ret;
 
@@ -81,7 +109,7 @@ int			execute_command_among_other(t_minishell *ms, size_t i, size_t *j)
 	return (ret);
 }
 
-int			ms_execute(t_minishell *ms)
+int					ms_execute(t_minishell *ms)
 {
 	size_t	i;
 	size_t	j;
@@ -95,12 +123,14 @@ int			ms_execute(t_minishell *ms)
 	ms->elem = ms->cmd;
 	while (ms->elem)
 	{
+		ms->ret = 0;
 		if (ms->elem->zu == ';')
 			if ((ret = execute_command_among_other(ms, i, &j)) < 0)
 				break ;
 		i++;
 		ms->elem = ms->elem->next;
 	}
+	ms->ret = 0;
 	if (ret < 0)
 		return (ret);
 	ret = (j < i && ms->arr_cmd[j]) ? execute_single_command(ms) : ret;

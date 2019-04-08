@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/27 18:07:39 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 18:20:43 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:18:59 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,10 +123,7 @@ int					ms_echo(t_minishell *ms)
 	{
 		tmp = parse_echo((ms->one_cmd)[i++], &stop);
 		if (!tmp)
-		{
-			ms->ret = 1;
-			return (1);
-		}
+			return (ms_error(ms, -1, "msh: not enough memory to use echo\n"));
 		ft_putstr(tmp);
 		ft_memdel((void **)&(tmp));
 		if (stop == 2)
@@ -134,6 +131,5 @@ int					ms_echo(t_minishell *ms)
 		(ms->one_cmd)[i] ? write(1, " ", 1) : 0;
 	}
 	!stop ? write(1, "\n", 1) : 0;
-	ms->ret = 0;
 	return (1);
 }

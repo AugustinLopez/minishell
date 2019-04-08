@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 15:38:22 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 16:49:19 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 16:10:56 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ static inline int		no_active_dollar(t_minishell *ms, int quote, size_t *i)
 	char	*tmp;
 
 	str = (char *)(ms->elem->pv);
-	if (quote == '\'' || (str[*i] != '$' && str[*i] != '\\'))
+	if (quote == '\'' || (str[*i] != '$' && str[*i] != '\\')
+		|| (str[*i] == '$' && ft_strchr(" \\\t", str[*i + 1])))
 	{
 		(*i)++;
 		return (1);
@@ -27,8 +28,8 @@ static inline int		no_active_dollar(t_minishell *ms, int quote, size_t *i)
 	{
 		if (str[*i + 1] == '$')
 		{
-			str[*i] = 0;
-			if (!(tmp = ft_strjoin(str, str + *i + 1)))
+			str[(*i)++] = 0;
+			if (!(tmp = ft_strjoin(str, str + *i)))
 				return (-1);
 			free(ms->elem->pv);
 			ms->elem->pv = tmp;
@@ -68,22 +69,22 @@ static inline int		no_replacement(t_minishell *ms, size_t i, size_t j)
 	char	*val;
 
 	str = (char *)(ms->elem->pv);
-	if (str[i + 1] == '?')
-	{
-		if (!(val = ft_itoa(ms->ret)))
-			return (1);
-	}
-	else
-		val = NULL;
+	val = NULL;
+	if (str[i + 1] == '?' && (!(val = ft_itoa(ms->ret))))
+		return (-1);
+	if (str[i + 1] == '0' && (!(val = ft_strdup("-minishell"))))
+		return (-1);
 	str[i] = 0;
 	if (val)
 		tmp = ft_sprintf("%s%s%s", str, val, str + i + 2);
+	else if (ft_strchr("~*=#@-!", str[i + 1]))
+		tmp = ft_strjoin(str, str + 2);
 	else
 		tmp = ft_strjoin(str, str + i + j);
 	if (val)
 		free(val);
 	if (!tmp)
-		return (1);
+		return (-1);
 	ft_memdel((void **)&(ms->elem->pv));
 	ms->elem->pv = tmp;
 	return (0);
@@ -101,9 +102,8 @@ static inline int		replacement(t_minishell *ms, size_t i, size_t j,
 	safe = ms->tmp0;
 	ms->tmp0 = 0;
 	str[i] = 0;
-	if (!ms_split_protect_characters(safe, &val))
-		return (1);
-	//ft_printf("1.%s\n", val);
+	if (ms_split_protect_characters(safe, &val))
+		return (-1);
 	if (quote == '\"')
 		tmp = ft_sprintf("%s\"%s\"%s", str, val, str + i + j);
 	else

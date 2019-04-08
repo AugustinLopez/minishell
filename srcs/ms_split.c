@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/29 14:54:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/04 17:22:55 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:28:08 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,20 @@ static inline int	ms_list_to_array(t_minishell *ms)
 }
 
 /*
-** cmd->zu is used to get "raw" semicolon
+** Note: $ should "probably" not be modified immediately after a ;
+** But changing this is not worth atm.
 */
 
 int					ms_split(t_minishell *ms)
 {
 	if (ms_split_to_list(ms))
-		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
+		return (ms_error(ms, -1, "msh: not enough memory to parse input.\n"));
 	if (ms_split_replace(ms))
-		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
+		return (ms_error(ms, -1, "msh: not enough memory to parse input.\n"));
 	if (ms_split_remove_quote(ms))
-		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
+		return (ms_error(ms, -1, "msh: not enough memory to parse input.\n"));
 	if (ms_list_to_array(ms))
-		return (ms_error(1, "minishell: not enough memory to parse input.\n"));
+		return (ms_error(ms, -1, "msh: not enough memory to parse input.\n"));
 	ms_free(ms, 2);
 	return (0);
 }
