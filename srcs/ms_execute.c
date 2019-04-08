@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 12:35:56 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:30:18 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 19:00:37 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,8 +130,8 @@ int					ms_execute(t_minishell *ms)
 		i++;
 		ms->elem = ms->elem->next;
 	}
-	ms->ret = 0;
-	if (ret < 0)
+	ms->ret = (ms->flags & MSF_NO_MORE_CMD) ? 130 : 0;
+	if (ret < 0 || ms->flags & MSF_NO_MORE_CMD)
 		return (ret);
 	ret = (j < i && ms->arr_cmd[j]) ? execute_single_command(ms) : ret;
 	return (ret);
