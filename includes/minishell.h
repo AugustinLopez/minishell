@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:35:36 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/08 18:40:51 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@
 */
 
 # define HOSTNAME_SIZE 16
-# define HISTO_SIZE 10
 
 # define MSF_SHOW_PATH_HOME 1
 # define MSF_ENV_CMD 2
@@ -62,7 +61,6 @@
 ** - ret: return value of command. See with echo $?
 ** - hostname: text of the prompt
 ** - cwd: current working directory
-** - histo: command historic
 ** - input: input in stdin
 ** - cmd: input in list form.
 ** - elem: current active command from 'cmd'.
@@ -81,7 +79,6 @@ typedef struct		s_minishell
 	int				ret;
 	char			hostname[HOSTNAME_SIZE + 1];
 	char			*cwd;
-	char			*histo[HISTO_SIZE];
 	char			*input;
 	t_list			*cmd;
 	t_list			*elem;
