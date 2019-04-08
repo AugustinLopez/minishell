@@ -78,7 +78,7 @@ int					execute_single_command(t_minishell *ms)
 		return (i);
 	if ((i = is_bin_cmd(ms)))
 		return (i);
-	if (lstat((ms->one_cmd)[0], &stat) != -1 && ft_strchr(ms->one_cmd[0], '/'))
+	if (lstat((ms->one_cmd)[0], &stat) != -1)
 	{
 		if ((stat.st_mode & S_IXUSR))
 			return (run_cmd(ms, (ms->one_cmd)[0]));
@@ -123,14 +123,12 @@ int					ms_execute(t_minishell *ms)
 	ms->elem = ms->cmd;
 	while (ms->elem)
 	{
-		ms->ret = 0;
 		if (ms->elem->zu == ';')
 			if ((ret = execute_command_among_other(ms, i, &j)) < 0)
 				break ;
 		i++;
 		ms->elem = ms->elem->next;
 	}
-	ms->ret = (ms->flags & MSF_NO_MORE_CMD) ? 130 : 0;
 	if (ret < 0 || ms->flags & MSF_NO_MORE_CMD)
 		return (ret);
 	ret = (j < i && ms->arr_cmd[j]) ? execute_single_command(ms) : ret;

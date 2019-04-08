@@ -74,5 +74,7 @@ int					main(int ac, char **av, char **env)
 	}
 	ms_free(&ms, 0);
 	err = (i < 0) ? i : err;
+	err = (ms.flags & MSF_EOF) ? 0 : err;
+	err = (!err && ms.ret) ? ms.ret : 0;
 	return (err);
 }

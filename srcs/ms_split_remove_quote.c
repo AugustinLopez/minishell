@@ -15,20 +15,24 @@
 static inline void	remove_quote(char **src, char **tmp)
 {
 	int		quote;
+	int		prev;
 	size_t	i;
 	size_t	j;
 
 	quote = 0;
+	prev = 0;
 	j = 0;
 	i = 0;
 	while ((*src)[j])
 	{
-		quote = quote_value((*src)[j], quote);
-		if (ft_strchr("\"\'", (*src)[j]))
+		quote = quote_value((*src)[j], prev);
+		if (prev != quote)
 		{
 			j++;
+			prev = quote;
 			continue ;
 		}
+		prev = quote;
 		if (((*src)[j] == '\\')
 			&& (!quote || (quote == '\"' && ft_strchr("\"\\", (*src)[j + 1]))))
 			j++;

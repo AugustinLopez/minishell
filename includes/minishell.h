@@ -49,6 +49,7 @@
 # define MSF_ENV_CMD 2
 # define MSF_REINITIALIZE_READER 4
 # define MSF_NO_MORE_CMD 8
+# define MSF_EOF 16
 
 /*
 ** --- Typedef & Global --------------------------------------------------------

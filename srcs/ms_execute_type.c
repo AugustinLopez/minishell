@@ -15,9 +15,6 @@
 
 void				ret_value(t_minishell *ms, int status)
 {
-	int	i;
-
-	i = 0;
 	if (WIFEXITED(status))
 		ms->ret = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -94,6 +91,7 @@ int					is_builtin_cmd(t_minishell *ms)
 
 	if (!ft_strcmp((ms->one_cmd)[0], "exit"))
 		ms_exit(ms);
+	ms->ret = 0;
 	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
 		return (ms_echo(ms));
 	if (!ft_strcmp((ms->one_cmd)[0], "cd"))

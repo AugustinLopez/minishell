@@ -36,6 +36,7 @@ static inline int	ms_gnl(t_minishell *ms, char **tmp, int quote)
 	if (!j)
 	{
 		ft_printf("\n");
+		ms->flags |= MSF_EOF;
 		return (1);
 	}
 	return (0);
