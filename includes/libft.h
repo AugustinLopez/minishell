@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/07 08:40:39 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:32:21 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/11 15:39:15 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ size_t				ft_atozu(const char *src);
 ** --- String Search Functions -------------------------------------------------
 ** size_t			ft_strcount(const char *s, int c);
 */
-
 char				*ft_strchr(const char *s, int c);
 int					ft_strcmp(const char *s1, const char *s2);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);

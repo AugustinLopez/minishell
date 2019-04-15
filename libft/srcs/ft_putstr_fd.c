@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/16 14:46:54 by aulopez           #+#    #+#             */
-/*   Updated: 2018/11/20 12:13:49 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/12 13:19:28 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 
 void	ft_putstr_fd(char const *c, int fd)
 {
+	int	ret;
+
 	if (!c)
 		return ;
-	write(fd, c, ft_strlen(c));
+	ret = write(fd, c, ft_strlen(c));
+	(void)ret;
 }
