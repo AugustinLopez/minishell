@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 11:48:20 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:30:01 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/15 13:23:39 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int					is_builtin_cmd(t_minishell *ms)
 	int	ret;
 
 	if (!ft_strcmp((ms->one_cmd)[0], "exit"))
-		ms_exit(ms);
+		return (ms_exit(ms));
 	ms->ret = 0;
 	if (!ft_strcmp((ms->one_cmd)[0], "echo"))
 		return (ms_echo(ms));

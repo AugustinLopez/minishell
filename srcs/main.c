@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 10:51:04 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:59:02 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/16 10:33:59 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,14 @@ inline static int	ms_init(t_minishell *ms, int ac, char **av, char **env)
 	return (0);
 }
 
+int					final_ret(t_minishell *ms, int err, int i)
+{
+	err = (i < 0) ? i : err;
+	err = (ms->flags & MSF_EOF) ? 0 : err;
+	err = (!err && ms->ret) ? ms->ret : 0;
+	return (err);
+}
+
 int					main(int ac, char **av, char **env)
 {
 	int			err;
@@ -73,8 +81,5 @@ int					main(int ac, char **av, char **env)
 			break ;
 	}
 	ms_free(&ms, 0);
-	err = (i < 0) ? i : err;
-	err = (ms.flags & MSF_EOF) ? 0 : err;
-	err = (!err && ms.ret) ? ms.ret : 0;
-	return (err);
+	return (final_ret(&ms, err, i));
 }

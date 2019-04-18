@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 18:04:36 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:30:57 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/15 13:29:57 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int					setenv_error_check(t_minishell *ms)
 	while (ms->one_cmd[i])
 	{
 		if (!(s = ft_strchr(ms->one_cmd[i], '=')) || ft_strchr(s + 1, '='))
-			return (ms_error(ms, 1, "setenv: format is \'name=value\'\n"));
+			return (ms_error(ms, 1, "setenv: format is not \'name=value\'\n"));
 		if (!(s[1]) || (ms->one_cmd[i][0] == '='))
 			return (ms_error(ms, 1, "setenv: name/value cannot be NUL\n"));
 		if (ft_isdigit(ms->one_cmd[i][0]))
