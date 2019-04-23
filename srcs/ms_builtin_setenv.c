@@ -6,14 +6,14 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/01 11:56:17 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 18:13:02 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:39:38 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
 static inline void	setenv_proceed(t_minishell *ms, t_list **start,
-									t_list **tmp, t_list **tmpenv)
+						t_list **tmp, t_list **tmpenv)
 {
 	if (!ms->env)
 	{

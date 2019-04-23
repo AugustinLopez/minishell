@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/03 16:42:47 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 17:45:23 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:44:56 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static inline void	remove_quote(char **src, char **tmp)
 			continue ;
 		}
 		prev = quote;
-		if (((*src)[j] == '\\')
+		if ((*src)[j] == '\\'
 			&& (!quote || (quote == '\"' && ft_strchr("\"\\", (*src)[j + 1]))))
 			j++;
 		(*tmp)[i++] = (*src)[j++];

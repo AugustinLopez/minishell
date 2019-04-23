@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/24 12:56:14 by aulopez           #+#    #+#             */
-/*   Updated: 2019/02/01 19:22:02 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:48:31 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ int			multiply_unit_neg(int **unit);
 int			add_unit_neg(int **unit, int **stack);
 
 void		ft_putnbr_pos_addentum(int **stack, int *i, char **tmp,
-										int dbl_tab);
+				int dbl_tab);
 void		ft_putnbr_pos_addentum2(int **stack, int *i, char **tmp,
-										int dbl_tab);
+				int dbl_tab);
 void		ft_putnbr_pos(int **stack, char **tmp, int dbl_tab, uint32_t flags);
 void		ft_putnbr_neg(int n, int end, char **tmp);
 
@@ -91,12 +91,12 @@ char		*exp_neg(uint64_t sign, int exp, uint64_t mantissa, int dbl_t);
 char		*exp_pos(uint32_t flags, int exp, uint64_t mantissa, int dbl_t);
 
 int			create_stack_neg(int **unit, int **stack, int exposent,
-								uint64_t mantissa);
+				uint64_t mantissa);
 int			create_stack_pos(int **unit, int **stack, int exposent,
-								uint64_t mantissa);
+				uint64_t mantissa);
 int			create_lstack_neg(int **unit, int **stack, int exposent,
-								uint64_t mantissa);
+				uint64_t mantissa);
 int			create_lstack_pos(int **unit, int **stack, int exposent,
-								uint64_t mantissa);
+				uint64_t mantissa);
 
 #endif

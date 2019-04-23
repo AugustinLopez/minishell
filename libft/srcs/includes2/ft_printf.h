@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/24 12:53:41 by aulopez           #+#    #+#             */
-/*   Updated: 2019/03/18 10:40:01 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:48:12 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,12 @@ int						pf_padding(t_printf *pf, int n);
 void					pf_itoa_base(uintmax_t n, int base, t_printf *pf);
 char					*ft_dbltoa(double x, size_t precision, uint32_t flags);
 char					*ft_ldbltoa(long double x, size_t precision,
-						uint32_t flags);
+							uint32_t flags);
 int						pf_sign(t_printf *pf);
 void					pf_itoa_quote(uintmax_t n, int b, char s[70],
-						t_printf *pf);
+							t_printf *pf);
 void					pf_itoa_fill(uintmax_t n, int b, char s[70],
-						t_printf *pf);
+							t_printf *pf);
 void					pf_putpointer(t_printf *pf);
 void					pf_putvoid(t_printf *pf);
 void					pf_putchar(t_printf *pf);

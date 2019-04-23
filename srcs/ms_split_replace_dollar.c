@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 15:38:22 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 16:10:56 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:44:01 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static inline int		no_replacement(t_minishell *ms, size_t i, size_t j)
 }
 
 static inline int		replacement(t_minishell *ms, size_t i, size_t j,
-									int quote)
+							int quote)
 {
 	char	*str;
 	char	*tmp;

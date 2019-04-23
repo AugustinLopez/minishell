@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/02 11:15:53 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/08 15:19:08 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:44:19 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static inline int	case_whitespace(t_minishell *ms, size_t *j, size_t *i)
 }
 
 static inline int	ms_parse_input(t_minishell *ms, size_t *i, size_t *j,
-									int *option)
+						int *option)
 {
 	int	special_case;
 

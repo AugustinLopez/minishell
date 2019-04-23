@@ -6,7 +6,7 @@
 /*   By: aulopez <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 11:21:42 by aulopez           #+#    #+#             */
-/*   Updated: 2019/04/15 13:24:28 by aulopez          ###   ########.fr       */
+/*   Updated: 2019/04/23 10:36:30 by aulopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void				ms_free(t_minishell *ms, int option);
 int					print_env(t_minishell *ms);
 char				*get_from_env(t_minishell *ms, char *var);
 int					get_home_path(t_minishell *ms, char *path, char **ret_path,
-								int revers);
+						int revers);
 
 /*
 ** Prompt & Signal
@@ -159,10 +159,10 @@ int					builtin_msname(t_minishell *ms);
 
 int					setenv_error_check(t_minishell *ms);
 int					setenv_mem_check(t_minishell *ms, t_list **tmp,
-									t_list **start);
+						t_list **start);
 int					cd_posix_minus(t_minishell *ms, int ac, int flags);
 int					cd_posix_step_1_2(t_minishell *ms, int ac, char *home_path,
-										int flags);
+						int flags);
 char				*cd_posix_step_3_to_6(t_minishell *ms, int ac, int *flags);
 int					cd_posix_parsing(t_minishell *ms, int *flags);
 int					change_dir(t_minishell *ms, char *path, int flags);
